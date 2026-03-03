@@ -330,6 +330,16 @@ svg.automaton { display: block; margin: 0 auto; }
 .sc-table td.new-row { background: #fdf5e8; }
 .sc-table td.accept-row { color: var(--green); font-weight: 700; }
 
+@media (max-width: 768px) {
+  .sc-table { border: 0; }
+  .sc-table thead { display: none; }
+  .sc-table tbody, .sc-table tr, .sc-table td { display: block; width: 100%; }
+  .sc-table tr { margin-bottom: 0.9rem; background: var(--paper); border: 1px solid var(--paper3); border-radius: 8px; padding: 0.6rem; }
+  .sc-table td { border: none; padding: 0.4rem 0; text-align: left; }
+  .sc-table td::before { content: attr(data-label); display: inline-block; width: 40%; font-family: var(--mono); font-weight: 600; color: var(--text-dim); }
+  .sc-table td.accept-row::before { color: var(--green); }
+}
+
 /* NAV BUTTONS */
 .lesson-nav {
   display: flex; justify-content: space-between; align-items: center;
@@ -1290,22 +1300,22 @@ li { margin-bottom: 0.4rem; line-height: 1.7; }
     <thead><tr><th>DFA State (Set)</th><th>On '0'</th><th>On '1'</th><th>Accepting?</th></tr></thead>
     <tbody>
       <tr>
-        <td>→ {q₀}</td>
-        <td>δ(q₀,0) = {q₀}</td>
-        <td>δ(q₀,1) = {q₀,q₁}</td>
-        <td>No (q₂ ∉ {q₀})</td>
+        <td data-label="DFA State (Set)">→ {q₀}</td>
+        <td data-label="On '0'">δ(q₀,0) = {q₀}</td>
+        <td data-label="On '1'">δ(q₀,1) = {q₀,q₁}</td>
+        <td data-label="Accepting?">No (q₂ ∉ {q₀})</td>
       </tr>
       <tr class="new-row">
-        <td>{q₀,q₁}</td>
-        <td>δ(q₀,0)∪δ(q₁,0) = {q₀}∪∅ = {q₀}</td>
-        <td>δ(q₀,1)∪δ(q₁,1) = {q₀,q₁}∪{q₂} = {q₀,q₁,q₂}</td>
-        <td>No</td>
+        <td data-label="DFA State (Set)">{q₀,q₁}</td>
+        <td data-label="On '0'">δ(q₀,0)∪δ(q₁,0) = {q₀}∪∅ = {q₀}</td>
+        <td data-label="On '1'">δ(q₀,1)∪δ(q₁,1) = {q₀,q₁}∪{q₂} = {q₀,q₁,q₂}</td>
+        <td data-label="Accepting?">No</td>
       </tr>
       <tr class="new-row accept-row">
-        <td>★ {q₀,q₁,q₂}</td>
-        <td>δ(q₀,0)∪δ(q₁,0)∪δ(q₂,0) = {q₀}</td>
-        <td>δ(q₀,1)∪δ(q₁,1)∪δ(q₂,1) = {q₀,q₁,q₂}</td>
-        <td>Yes ✓ (q₂ ∈ this set)</td>
+        <td data-label="DFA State (Set)">★ {q₀,q₁,q₂}</td>
+        <td data-label="On '0'">δ(q₀,0)∪δ(q₁,0)∪δ(q₂,0) = {q₀}</td>
+        <td data-label="On '1'">δ(q₀,1)∪δ(q₁,1)∪δ(q₂,1) = {q₀,q₁,q₂}</td>
+        <td data-label="Accepting?">Yes ✓ (q₂ ∈ this set)</td>
       </tr>
     </tbody>
   </table>
@@ -2139,9 +2149,9 @@ li { margin-bottom: 0.4rem; line-height: 1.7; }
         <table class="sc-table">
           <thead><tr><th>DFA State</th><th>On 'a'</th><th>On 'b'</th><th>Accept?</th></tr></thead>
           <tbody>
-            <tr><td>→ {0}</td><td>{0,1}</td><td>{0}</td><td>No</td></tr>
-            <tr><td>{0,1}</td><td>{0,1}</td><td>{0,2}</td><td>No</td></tr>
-            <tr><td class="accept-row">★ {0,2}</td><td>{0,1}</td><td>{0}</td><td>Yes (2∈F)</td></tr>
+            <tr><td data-label="DFA State">→ {0}</td><td data-label="On 'a'">{0,1}</td><td data-label="On 'b'">{0}</td><td data-label="Accept?">No</td></tr>
+            <tr><td data-label="DFA State">{0,1}</td><td data-label="On 'a'">{0,1}</td><td data-label="On 'b'">{0,2}</td><td data-label="Accept?">No</td></tr>
+            <tr><td class="accept-row" data-label="DFA State">★ {0,2}</td><td data-label="On 'a'">{0,1}</td><td data-label="On 'b'">{0}</td><td data-label="Accept?">Yes (2∈F)</td></tr>
           </tbody>
         </table>
         <p>3 DFA states. Start: {0}. Accept: {0,2}.</p>
