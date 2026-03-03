@@ -53,7 +53,34 @@ body {
 .sidebar-logo {
   padding: 1.5rem 1.2rem 1rem;
   border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
 }
+
+.sidebar-logo > div:first-child {
+  flex: 1;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  margin: -0.3rem 0 0 0;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+}
+
 .sidebar-logo .course { font-family: var(--mono); font-size: 0.65rem; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; }
 .sidebar-logo h1 { font-family: var(--serif); font-size: 1rem; color: white; margin-top: 0.3rem; line-height: 1.4; }
 
@@ -362,11 +389,243 @@ li { margin-bottom: 0.4rem; line-height: 1.7; }
 .pump-legend .dot { width: 12px; height: 12px; border-radius: 2px; }
 
 /* RESPONSIVE */
-@media (max-width: 800px) {
+@media (max-width: 1024px) {
   .sidebar { width: 220px; }
   .main { margin-left: 220px; }
   .lesson-section { padding: 2rem 1.5rem 4rem; }
   .regex-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  /* Hide sidebar on tablet and below */
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    max-height: 100vh;
+    z-index: 200;
+    transition: max-height 0.3s ease;
+  }
+  
+  .sidebar nav {
+    display: none;
+    flex-direction: column;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    background: var(--ink);
+  }
+  
+  .sidebar.mobile-open nav {
+    display: flex;
+  }
+  
+  .sidebar-logo {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  
+  .nav-section-label {
+    padding: 1rem 1.2rem 0.3rem;
+  }
+  
+  .main {
+    margin-left: 0;
+    margin-top: 0;
+  }
+  
+  .lesson-section {
+    padding: 1.5rem 1.2rem 3rem;
+    max-width: 100%;
+  }
+  
+  .section-title { font-size: 1.8rem; }
+  .section-subtitle { font-size: 0.95rem; margin-bottom: 1.8rem; }
+  
+  h2 { font-size: 1.2rem; margin: 2rem 0 0.6rem; }
+  h3 { font-size: 0.8rem; }
+  
+  table { font-size: 0.75rem; }
+  thead th { font-size: 0.65rem; padding: 0.5rem 0.7rem; }
+  tbody td { padding: 0.5rem 0.7rem; }
+  
+  .code-block { padding: 1rem 1.2rem; font-size: 0.75rem; }
+  
+  .simulator { padding: 1.2rem; }
+  .sim-title { font-size: 0.65rem; }
+  
+  .sim-tape { gap: 3px; }
+  .tape-cell { width: 38px; height: 38px; font-size: 0.95rem; }
+  
+  .callout { padding: 1rem 1.2rem; margin: 1rem 0; }
+  
+  .regex-row { grid-template-columns: 1fr; }
+  
+  .dfa-diagram {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  
+  svg.automaton {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .lesson-nav {
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+  
+  .nav-btn {
+    width: 100%;
+  }
+  
+  .quiz-block { padding: 1.2rem; }
+  
+  .regex-tester { padding: 1.2rem; }
+  
+  .pump-game { padding: 1.2rem; }
+  
+  .pump-string-display { font-size: 1rem; }
+  .pump-char { width: 24px; height: 32px; font-size: 0.9rem; }
+  
+  ul, ol { padding-left: 1.2rem; }
+  
+  code { font-size: 0.8em; }
+}
+
+@media (max-width: 480px) {
+  .sidebar-logo {
+    padding: 0.8rem 1rem 0.6rem;
+  }
+  
+  .sidebar-logo .course { font-size: 0.55rem; }
+  .sidebar-logo h1 { font-size: 0.9rem; }
+  
+  .menu-toggle { font-size: 1.25rem; }
+  
+  .lesson-section {
+    padding: 1rem 1rem 2.5rem;
+  }
+  
+  .section-eyebrow { font-size: 0.55rem; margin-bottom: 0.4rem; }
+  .section-title { font-size: 1.5rem; margin-bottom: 0.4rem; }
+  .section-subtitle { font-size: 0.9rem; margin-bottom: 1.2rem; padding-bottom: 1rem; }
+  
+  p { font-size: 0.95rem; line-height: 1.6; }
+  
+  h2 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
+  
+  table { font-size: 0.7rem; }
+  thead th { font-size: 0.6rem; padding: 0.4rem 0.5rem; }
+  tbody td { padding: 0.4rem 0.5rem; }
+  
+  .code-block {
+    padding: 0.9rem 1rem;
+    font-size: 0.7rem;
+    line-height: 1.8;
+  }
+  
+  .math {
+    padding: 0.7rem 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .callout {
+    padding: 0.9rem 1rem;
+    margin: 0.8rem 0;
+    border-radius: 4px;
+  }
+  
+  .callout-label { font-size: 0.6rem; }
+  
+  .simulator {
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+  }
+  
+  .sim-input-wrap {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .sim-input {
+    width: 100%;
+    font-size: 1rem;
+  }
+  
+  .sim-btn {
+    width: 100%;
+    padding: 0.6rem;
+  }
+  
+  .tape-cell { width: 32px; height: 32px; font-size: 0.85rem; }
+  
+  .state-tag { font-size: 0.65rem; padding: 2px 6px; margin-bottom: 0.3rem; }
+  
+  .step-item { gap: 0.8rem; }
+  .step-num { width: 28px; height: 28px; font-size: 0.65rem; }
+  
+  .acc-header { padding: 0.9rem; font-size: 0.85rem; }
+  .acc-body-inner { padding: 1rem; font-size: 0.82rem; }
+  
+  .quiz-block { padding: 1rem; }
+  .quiz-q-text { font-size: 0.9rem; }
+  .qopt { padding: 0.6rem 0.9rem; font-size: 0.82rem; }
+  
+  .regex-tester { padding: 1rem; }
+  .regex-field label { font-size: 0.6rem; }
+  .regex-field input { font-size: 0.85rem; padding: 0.5rem 0.7rem; }
+  
+  .regex-ex-btn { font-size: 0.65rem; padding: 2px 6px; }
+  
+  .pump-game { padding: 1rem; }
+  .pump-string-display { font-size: 0.9rem; }
+  .pump-char { width: 20px; height: 28px; font-size: 0.8rem; border-width: 1px; }
+  .pump-legend { font-size: 0.7rem; gap: 0.6rem; }
+  .pump-legend .dot { width: 10px; height: 10px; }
+  
+  .tag { font-size: 0.55rem; padding: 1px 4px; }
+  
+  .highlight-box {
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+  }
+  
+  .highlight-box p { font-size: 0.95rem; }
+  
+  ul, ol { padding-left: 1rem; margin-bottom: 0.8rem; }
+  li { margin-bottom: 0.3rem; }
+  
+  code { font-size: 0.75em; padding: 1px 4px; }
+  
+  .regex-row { gap: 0.8rem; }
+  
+  .lesson-nav {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+  
+  .nav-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+    width: 100%;
+  }
+  
+  .sc-table { font-size: 0.7rem; }
+  .sc-table th, .sc-table td { padding: 0.5rem 0.6rem; }
+  
+  .divider { margin: 1.5rem 0; }
+  
+  .progress-bar-wrap {
+    padding: 0.8rem 1rem;
+  }
+  
+  .progress-label { font-size: 0.55rem; }
 }
 
 .tag { display: inline-block; font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; }
@@ -379,12 +638,15 @@ li { margin-bottom: 0.4rem; line-height: 1.7; }
 <body>
 
 <!-- SIDEBAR -->
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <div class="course">SE 2FA3 · Full Lesson</div>
-    <h1>Formal Languages &amp; Automata</h1>
+    <div>
+      <div class="course">SE 2FA3 · Full Lesson</div>
+      <h1>Formal Languages &amp; Automata</h1>
+    </div>
+    <button class="menu-toggle" id="menu-toggle" onclick="toggleMobileMenu()">✕</button>
   </div>
-  <nav>
+  <nav id="sidebar-nav">
     <div class="nav-section-label">Part 1 — Foundations</div>
     <button class="nav-item active" onclick="goTo(0)"><span class="num">01</span>Introduction & Big Picture</button>
     <button class="nav-item" onclick="goTo(1)"><span class="num">02</span>Alphabets, Strings & Languages</button>
@@ -1935,6 +2197,35 @@ li { margin-bottom: 0.4rem; line-height: 1.7; }
 let currentSection = 0;
 const totalSections = 14;
 
+function toggleMobileMenu() {
+  const sidebar = document.getElementById('sidebar');
+  const sidebarNav = document.getElementById('sidebar-nav');
+  const toggle = document.getElementById('menu-toggle');
+  
+  const isOpen = sidebar.classList.contains('mobile-open');
+  
+  if (isOpen) {
+    sidebar.classList.remove('mobile-open');
+    sidebarNav.classList.remove('mobile-open');
+    toggle.textContent = '☰';
+  } else {
+    sidebar.classList.add('mobile-open');
+    sidebarNav.classList.add('mobile-open');
+    toggle.textContent = '✕';
+  }
+}
+
+function closeMenuOnMobile() {
+  if (window.innerWidth <= 768) {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarNav = document.getElementById('sidebar-nav');
+    const toggle = document.getElementById('menu-toggle');
+    sidebar.classList.remove('mobile-open');
+    sidebarNav.classList.remove('mobile-open');
+    toggle.textContent = '☰';
+  }
+}
+
 function goTo(n) {
   document.querySelectorAll('.lesson-section').forEach((s,i) => {
     s.classList.toggle('active', i === n);
@@ -1946,6 +2237,7 @@ function goTo(n) {
   document.getElementById('progress').style.width = ((n+1)/totalSections*100) + '%';
   document.querySelector('.main').scrollTo ? document.querySelector('.main').scrollTo(0,0) : window.scrollTo(0,0);
   window.scrollTo(0,0);
+  closeMenuOnMobile();
 }
 
 function toggleAcc(btn) {
