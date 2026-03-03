@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SE 2FA3 — Full Lesson</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a2e;
+  --ink2: #16213e;
+  --paper: #f4f0e8;
+  --paper2: #ede8dc;
+  --paper3: #e4ddd0;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --teal: #0f7d8c;
+  --teal-light: #1aa5b8;
+  --rose: #c0392b;
+  --green: #1a7a4a;
+  --text: #2c2c3e;
+  --text-dim: #6b6b80;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'Lora', Georgia, serif;
+  --sans: 'Outfit', sans-serif;
+  --shadow: 0 2px 20px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 260px; height: 100vh;
+  background: var(--ink);
+  overflow-y: auto;
+  z-index: 200;
+  display: flex; flex-direction: column;
+  box-shadow: 4px 0 30px rgba(0,0,0,0.3);
+}
+
+.sidebar-logo {
+  padding: 1.5rem 1.2rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-logo .course { font-family: var(--mono); font-size: 0.65rem; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; }
+.sidebar-logo h1 { font-family: var(--serif); font-size: 1rem; color: white; margin-top: 0.3rem; line-height: 1.4; }
+
+.sidebar nav { padding: 0.8rem 0; flex: 1; }
+
+.nav-section-label {
+  font-family: var(--mono); font-size: 0.6rem; color: rgba(255,255,255,0.3);
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 1rem 1.2rem 0.3rem;
+}
+
+.nav-item {
+  display: block; width: 100%;
+  padding: 0.55rem 1.2rem;
+  background: none; border: none; cursor: pointer;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--sans); font-size: 0.82rem;
+  text-align: left;
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+  text-decoration: none;
+}
+.nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
+.nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,168,76,0.08); font-weight: 600; }
+.nav-item .num { font-family: var(--mono); font-size: 0.65rem; margin-right: 0.5rem; opacity: 0.5; }
+
+.progress-bar-wrap { padding: 1rem 1.2rem; border-top: 1px solid rgba(255,255,255,0.08); }
+.progress-label { font-family: var(--mono); font-size: 0.6rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.progress-track { background: rgba(255,255,255,0.1); border-radius: 99px; height: 4px; }
+.progress-fill { background: var(--gold); height: 4px; border-radius: 99px; transition: width 0.4s ease; }
+
+/* MAIN CONTENT */
+.main {
+  margin-left: 260px;
+  min-height: 100vh;
+}
+
+/* SECTIONS */
+.lesson-section {
+  display: none;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 3rem 2.5rem 5rem;
+  animation: fadeIn 0.3s ease;
+}
+.lesson-section.active { display: block; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* SECTION HEADER */
+.section-eyebrow {
+  font-family: var(--mono); font-size: 0.65rem; color: var(--gold);
+  letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.6rem;
+}
+.section-title {
+  font-family: var(--serif); font-size: 2.2rem; font-weight: 700;
+  line-height: 1.2; margin-bottom: 0.6rem; color: var(--ink);
+}
+.section-subtitle {
+  font-size: 1rem; color: var(--text-dim); margin-bottom: 2.5rem;
+  padding-bottom: 2rem; border-bottom: 1px solid var(--paper3);
+}
+
+/* TYPOGRAPHY */
+h2 { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; margin: 2.5rem 0 0.8rem; color: var(--ink); }
+h3 { font-family: var(--sans); font-size: 1rem; font-weight: 600; margin: 1.8rem 0 0.6rem; color: var(--teal); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; }
+p { margin-bottom: 1rem; color: var(--text); line-height: 1.8; }
+strong { color: var(--ink); }
+em { font-style: italic; color: var(--teal); }
+
+/* CALLOUT BOXES */
+.callout {
+  border-radius: 6px; padding: 1.2rem 1.4rem; margin: 1.4rem 0;
+  border-left: 4px solid;
+}
+.callout.definition { background: #e8f4f8; border-color: var(--teal); }
+.callout.definition .callout-label { color: var(--teal); }
+.callout.example { background: #f0f7f0; border-color: var(--green); }
+.callout.example .callout-label { color: var(--green); }
+.callout.warning { background: #fdf5e8; border-color: var(--gold); }
+.callout.warning .callout-label { color: var(--gold); }
+.callout.danger { background: #fdf0ee; border-color: var(--rose); }
+.callout.danger .callout-label { color: var(--rose); }
+.callout-label { font-family: var(--mono); font-size: 0.65rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; }
+.callout p { margin-bottom: 0; }
+.callout p + p { margin-top: 0.5rem; }
+
+/* CODE BLOCKS */
+.code-block {
+  background: var(--ink2);
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin: 1.2rem 0;
+  font-family: var(--mono); font-size: 0.83rem;
+  color: #e0e0ff;
+  line-height: 2;
+  overflow-x: auto;
+  position: relative;
+}
+.code-block .kw { color: var(--gold-light); }
+.code-block .val { color: #7ec8e3; }
+.code-block .comment { color: rgba(255,255,255,0.3); font-style: italic; }
+.code-block .hl { color: #98ff98; }
+
+/* MATH DISPLAY */
+.math {
+  font-family: var(--mono); font-size: 0.9rem;
+  background: var(--paper3); border-radius: 6px;
+  padding: 0.9rem 1.2rem; margin: 1rem 0;
+  color: var(--ink); line-height: 2; border: 1px solid var(--paper3);
+  overflow-x: auto;
+}
+.math .sub { font-size: 0.7em; vertical-align: sub; }
+
+/* TABLES */
+table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: 0.88rem; }
+thead th { background: var(--ink); color: white; font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.7rem 1rem; text-align: left; }
+tbody td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--paper3); }
+tbody tr:hover td { background: var(--paper2); }
+tbody tr:last-child td { border-bottom: none; }
+
+/* INTERACTIVE: AUTOMATON SIMULATOR */
+.simulator {
+  background: white; border: 1px solid var(--paper3);
+  border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0;
+  box-shadow: var(--shadow);
+}
+.sim-title { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+.sim-input-wrap { display: flex; gap: 0.5rem; margin-bottom: 1rem; align-items: center; }
+.sim-input {
+  flex: 1; font-family: var(--mono); font-size: 1rem;
+  padding: 0.6rem 1rem; border: 2px solid var(--paper3);
+  border-radius: 6px; background: var(--paper); color: var(--ink);
+  outline: none; transition: border-color 0.15s;
+}
+.sim-input:focus { border-color: var(--teal); }
+.sim-btn {
+  padding: 0.6rem 1.2rem; background: var(--teal); color: white;
+  border: none; border-radius: 6px; cursor: pointer;
+  font-family: var(--sans); font-weight: 600; font-size: 0.85rem;
+  transition: background 0.15s;
+}
+.sim-btn:hover { background: var(--teal-light); }
+.sim-btn.secondary { background: var(--paper3); color: var(--text); }
+.sim-btn.secondary:hover { background: var(--paper3); filter: brightness(0.95); }
+
+.sim-tape {
+  display: flex; gap: 4px; margin-bottom: 1rem; flex-wrap: wrap; min-height: 52px; align-items: center;
+}
+.tape-cell {
+  width: 44px; height: 44px; border: 2px solid var(--paper3);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 1.1rem; font-weight: 600;
+  transition: all 0.2s; background: white; position: relative;
+  flex-shrink: 0;
+}
+.tape-cell.active { border-color: var(--teal); background: #e8f4f8; transform: scale(1.1); }
+.tape-cell.done { border-color: var(--paper3); background: var(--paper2); color: var(--text-dim); }
+.tape-cell.done.accepted { border-color: var(--green); background: #f0f7f0; }
+.tape-cell.done.rejected { border-color: var(--rose); background: #fdf0ee; }
+
+.state-display {
+  font-family: var(--mono); font-size: 0.85rem; margin-bottom: 0.8rem;
+}
+.state-tag {
+  display: inline-block; padding: 3px 10px; border-radius: 4px;
+  margin-right: 0.5rem; margin-bottom: 0.4rem;
+  font-size: 0.75rem;
+}
+.state-tag.current { background: var(--teal); color: white; }
+.state-tag.accept { background: var(--green); color: white; }
+.state-tag.reject { background: var(--rose); color: white; }
+.state-tag.info { background: var(--paper3); color: var(--text); }
+
+.sim-result {
+  padding: 0.8rem 1rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem;
+  display: none; margin-top: 0.5rem;
+}
+.sim-result.accept { background: #f0f7f0; color: var(--green); display: block; }
+.sim-result.reject { background: #fdf0ee; color: var(--rose); display: block; }
+
+/* DFA DIAGRAM */
+.dfa-diagram {
+  background: white; border: 1px solid var(--paper3);
+  border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0;
+  box-shadow: var(--shadow); overflow-x: auto;
+}
+svg.automaton { display: block; margin: 0 auto; }
+
+/* STEPS */
+.steps { counter-reset: step; margin: 1.2rem 0; }
+.step-item {
+  display: flex; gap: 1rem; margin-bottom: 1.2rem;
+  counter-increment: step;
+}
+.step-num {
+  width: 32px; height: 32px; min-width: 32px;
+  background: var(--teal); color: white;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 0.75rem; font-weight: 600;
+  margin-top: 2px;
+}
+.step-body { flex: 1; }
+.step-body strong { display: block; margin-bottom: 0.3rem; }
+
+/* ACCORDION */
+.accordion { margin: 1rem 0; }
+.acc-item { border: 1px solid var(--paper3); border-radius: 8px; margin-bottom: 0.5rem; overflow: hidden; }
+.acc-header {
+  width: 100%; padding: 1rem 1.2rem; background: white; border: none;
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; font-family: var(--sans); font-size: 0.9rem; font-weight: 600;
+  color: var(--ink); transition: background 0.15s; text-align: left;
+}
+.acc-header:hover { background: var(--paper2); }
+.acc-icon { font-size: 1rem; transition: transform 0.2s; color: var(--teal); }
+.acc-header.open .acc-icon { transform: rotate(45deg); }
+.acc-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; background: var(--paper2); }
+.acc-body.open { max-height: 1000px; }
+.acc-body-inner { padding: 1.2rem 1.4rem; font-size: 0.88rem; line-height: 1.8; }
+
+/* QUIZ */
+.quiz-block {
+  background: white; border: 1px solid var(--paper3);
+  border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0;
+  box-shadow: var(--shadow);
+}
+.quiz-q-text { font-weight: 600; margin-bottom: 1rem; font-size: 0.95rem; }
+.quiz-opts { display: flex; flex-direction: column; gap: 0.5rem; }
+.qopt {
+  padding: 0.75rem 1rem; border: 2px solid var(--paper3);
+  border-radius: 6px; cursor: pointer; font-size: 0.87rem;
+  transition: all 0.15s; background: var(--paper);
+}
+.qopt:hover { border-color: var(--teal); background: #e8f4f8; }
+.qopt.correct { border-color: var(--green); background: #f0f7f0; color: var(--green); font-weight: 600; }
+.qopt.wrong { border-color: var(--rose); background: #fdf0ee; color: var(--rose); }
+.quiz-feedback { margin-top: 1rem; padding: 0.8rem 1rem; border-radius: 6px; font-size: 0.85rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct { background: #f0f7f0; color: var(--green); }
+.quiz-feedback.wrong { background: #fdf0ee; color: var(--rose); }
+
+/* SUBSET CONSTRUCTION TABLE BUILDER */
+.sc-table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.85rem; }
+.sc-table th, .sc-table td { border: 2px solid var(--ink2); padding: 0.6rem 0.9rem; text-align: center; font-family: var(--mono); }
+.sc-table th { background: var(--ink2); color: white; }
+.sc-table td.new-row { background: #fdf5e8; }
+.sc-table td.accept-row { color: var(--green); font-weight: 700; }
+
+/* NAV BUTTONS */
+.lesson-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--paper3);
+}
+.nav-btn {
+  padding: 0.7rem 1.5rem; border: 2px solid var(--paper3);
+  border-radius: 8px; cursor: pointer; font-family: var(--sans); font-weight: 600;
+  font-size: 0.85rem; background: white; color: var(--ink); transition: all 0.15s;
+  text-decoration: none;
+}
+.nav-btn:hover { border-color: var(--teal); color: var(--teal); }
+.nav-btn.primary { background: var(--teal); color: white; border-color: var(--teal); }
+.nav-btn.primary:hover { background: var(--teal-light); border-color: var(--teal-light); }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* INLINE CODE */
+code { font-family: var(--mono); font-size: 0.85em; background: var(--paper3); padding: 2px 6px; border-radius: 3px; }
+
+ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+li { margin-bottom: 0.4rem; line-height: 1.7; }
+
+.highlight-box {
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink2) 100%);
+  color: white; border-radius: 10px; padding: 1.5rem 2rem; margin: 1.5rem 0;
+}
+.highlight-box p { color: rgba(255,255,255,0.85); }
+.highlight-box strong { color: var(--gold-light); }
+
+/* INTERACTIVE REGEX TESTER */
+.regex-tester { background: white; border: 1px solid var(--paper3); border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0; box-shadow: var(--shadow); }
+.regex-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.regex-field { display: flex; flex-direction: column; gap: 0.3rem; }
+.regex-field label { font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
+.regex-field input { font-family: var(--mono); font-size: 0.9rem; padding: 0.6rem 0.8rem; border: 2px solid var(--paper3); border-radius: 6px; background: var(--paper); color: var(--ink); outline: none; }
+.regex-field input:focus { border-color: var(--teal); }
+.regex-examples { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.regex-ex-btn { font-family: var(--mono); font-size: 0.72rem; padding: 3px 10px; background: var(--paper3); border: none; border-radius: 4px; cursor: pointer; transition: all 0.15s; }
+.regex-ex-btn:hover { background: var(--teal); color: white; }
+.regex-result-list { max-height: 140px; overflow-y: auto; }
+.regex-result-item { display: flex; justify-content: space-between; align-items: center; padding: 0.3rem 0.5rem; border-radius: 4px; font-family: var(--mono); font-size: 0.82rem; margin-bottom: 2px; }
+.regex-result-item.match { background: #f0f7f0; }
+.regex-result-item.nomatch { background: #fdf0ee; }
+.match-icon { font-size: 0.8rem; }
+
+/* PUMPING GAME */
+.pump-game { background: white; border: 1px solid var(--paper3); border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0; box-shadow: var(--shadow); }
+.pump-step { display: none; }
+.pump-step.active { display: block; }
+.pump-string-display { font-family: var(--mono); font-size: 1.1rem; letter-spacing: 0.1em; margin: 1rem 0; display: flex; gap: 0; flex-wrap: wrap; }
+.pump-char { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 36px; border: 2px solid var(--paper3); font-size: 0.95rem; }
+.pump-char.x-part { background: #e8f4f8; border-color: var(--teal); }
+.pump-char.y-part { background: #fdf5e8; border-color: var(--gold); font-weight: 700; }
+.pump-char.z-part { background: #f0f7f0; border-color: var(--green); }
+.pump-legend { display: flex; gap: 1rem; font-size: 0.78rem; font-family: var(--mono); margin-bottom: 0.8rem; }
+.pump-legend span { display: flex; align-items: center; gap: 0.3rem; }
+.pump-legend .dot { width: 12px; height: 12px; border-radius: 2px; }
+
+/* RESPONSIVE */
+@media (max-width: 800px) {
+  .sidebar { width: 220px; }
+  .main { margin-left: 220px; }
+  .lesson-section { padding: 2rem 1.5rem 4rem; }
+  .regex-row { grid-template-columns: 1fr; }
+}
+
+.tag { display: inline-block; font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; }
+.tag.exam { background: rgba(201,168,76,0.2); color: #8a6820; }
+
+.divider { border: none; border-top: 1px solid var(--paper3); margin: 2rem 0; }
+
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="course">SE 2FA3 · Full Lesson</div>
+    <h1>Formal Languages &amp; Automata</h1>
+  </div>
+  <nav>
+    <div class="nav-section-label">Part 1 — Foundations</div>
+    <button class="nav-item active" onclick="goTo(0)"><span class="num">01</span>Introduction & Big Picture</button>
+    <button class="nav-item" onclick="goTo(1)"><span class="num">02</span>Alphabets, Strings & Languages</button>
+
+    <div class="nav-section-label">Part 2 — Automata</div>
+    <button class="nav-item" onclick="goTo(2)"><span class="num">03</span>Deterministic Finite Automata</button>
+    <button class="nav-item" onclick="goTo(3)"><span class="num">04</span>Building DFAs — Techniques</button>
+    <button class="nav-item" onclick="goTo(4)"><span class="num">05</span>Nondeterministic Automata (NFA)</button>
+    <button class="nav-item" onclick="goTo(5)"><span class="num">06</span>Subset Construction</button>
+    <button class="nav-item" onclick="goTo(6)"><span class="num">07</span>Product Construction</button>
+
+    <div class="nav-section-label">Part 3 — Regular Expressions</div>
+    <button class="nav-item" onclick="goTo(7)"><span class="num">08</span>Regular Expressions</button>
+    <button class="nav-item" onclick="goTo(8)"><span class="num">09</span>Writing Regex — All Patterns</button>
+    <button class="nav-item" onclick="goTo(9)"><span class="num">10</span>Regex ↔ Automaton Conversions</button>
+
+    <div class="nav-section-label">Part 4 — Theory</div>
+    <button class="nav-item" onclick="goTo(10)"><span class="num">11</span>State Equivalence</button>
+    <button class="nav-item" onclick="goTo(11)"><span class="num">12</span>Pumping Lemma</button>
+
+    <div class="nav-section-label">Part 5 — Exam Prep</div>
+    <button class="nav-item" onclick="goTo(12)"><span class="num">13</span>True/False Mastery</button>
+    <button class="nav-item" onclick="goTo(13)"><span class="num">14</span>Full Practice Problems</button>
+  </nav>
+  <div class="progress-bar-wrap">
+    <div class="progress-label">Progress</div>
+    <div class="progress-track"><div class="progress-fill" id="progress" style="width:7%"></div></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- ========== SECTION 0: INTRO ========== -->
+<div class="lesson-section active" id="sec-0">
+  <div class="section-eyebrow">Chapter 01 — Introduction</div>
+  <div class="section-title">The Big Picture</div>
+  <div class="section-subtitle">What is this course actually about, and why does it matter?</div>
+
+  <p>SE 2FA3 — <strong>Formal Languages and Automata</strong> — is a course about one of the deepest questions in computer science: <em>what problems can computers solve, and how do we describe the inputs those programs read?</em></p>
+
+  <p>Rather than asking "how do I write a program," this course asks "what <em>kinds</em> of patterns can a machine even recognize?" The answer turns out to be a beautiful hierarchy — and your midterm focuses on the <strong>simplest level</strong> of that hierarchy: <em>regular languages</em>.</p>
+
+  <h2>The Core Equivalence — The Most Important Idea</h2>
+  <div class="highlight-box">
+    <p>The entire course rests on one stunning theorem:</p>
+    <p style="font-size:1.1rem; margin-top:0.8rem;"><strong>Regular Expression &nbsp;⟺&nbsp; NFA &nbsp;⟺&nbsp; DFA &nbsp;⟺&nbsp; Regular Language</strong></p>
+    <p style="margin-top:0.8rem;">These four things all describe <em>exactly the same class of languages</em>. They are just different ways of expressing the same power. Understanding this equivalence — and knowing how to convert between them — is the heart of this course.</p>
+  </div>
+
+  <h2>A Mental Model: The Language Machine</h2>
+  <p>Think of a language as a <strong>yes/no filter</strong> on strings. You feed it a string, it says "this string is in the language" (accept) or "it's not" (reject).</p>
+  <p>A <em>DFA</em> (Deterministic Finite Automaton) is one way to physically <strong>build</strong> such a filter — a machine with a finite number of "rooms" (states) that reads one character at a time and moves between rooms, finally saying yes or no based on which room it ends up in.</p>
+
+  <h2>What Topics Appear on the Midterm?</h2>
+  <table>
+    <thead><tr><th>Topic</th><th>Frequency</th><th>Marks</th></tr></thead>
+    <tbody>
+      <tr><td>True/False about theory</td><td>Every exam</td><td>5 marks</td></tr>
+      <tr><td>DFA Construction</td><td>Every exam</td><td>2–3 marks</td></tr>
+      <tr><td>NFA Construction</td><td>Every exam</td><td>2–3 marks</td></tr>
+      <tr><td>Regular Expressions</td><td>Every exam</td><td>5 marks</td></tr>
+      <tr><td>Subset/Product Construction</td><td>Most exams</td><td>3–5 marks</td></tr>
+      <tr><td>Pumping Lemma</td><td>Occasionally</td><td>5 marks</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warning">
+    <div class="callout-label">⚡ Exam Note</div>
+    <p>You're allowed <strong>1 page of notes</strong> (front and back). Build it as you go through this lesson — every key formula is noted with what to write down.</p>
+  </div>
+
+  <div class="lesson-nav">
+    <span></span>
+    <button class="nav-btn primary" onclick="goTo(1)">Next: Alphabets & Languages →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 1: FOUNDATIONS ========== -->
+<div class="lesson-section" id="sec-1">
+  <div class="section-eyebrow">Chapter 02 — Foundations</div>
+  <div class="section-title">Alphabets, Strings & Languages</div>
+  <div class="section-subtitle">The mathematical vocabulary you need for everything else.</div>
+
+  <h2>Alphabet (Σ)</h2>
+  <div class="callout definition">
+    <div class="callout-label">Definition</div>
+    <p>An <strong>alphabet</strong> Σ is a <em>finite, non-empty set of symbols</em>.</p>
+  </div>
+  <p>Examples:</p>
+  <ul>
+    <li>Σ = {a, b} — the two-letter alphabet used in most exam problems</li>
+    <li>Σ = {0, 1} — binary alphabet, used for bit-string problems</li>
+    <li>Σ = {a, b, c, ..., z} — the English alphabet</li>
+  </ul>
+
+  <h2>Strings</h2>
+  <div class="callout definition">
+    <div class="callout-label">Definition</div>
+    <p>A <strong>string</strong> (or word) over Σ is a <em>finite sequence of symbols</em> from Σ.</p>
+    <p>The <strong>length</strong> |w| of string w is the number of symbols in it.</p>
+    <p>The <strong>empty string</strong> ε (epsilon) has length 0 — it contains no symbols.</p>
+  </div>
+  <table>
+    <thead><tr><th>String</th><th>Length</th><th>Over Σ = {a,b}?</th></tr></thead>
+    <tbody>
+      <tr><td><code>ε</code></td><td>0</td><td>Yes</td></tr>
+      <tr><td><code>a</code></td><td>1</td><td>Yes</td></tr>
+      <tr><td><code>aabb</code></td><td>4</td><td>Yes</td></tr>
+      <tr><td><code>abba</code></td><td>4</td><td>Yes</td></tr>
+      <tr><td><code>abc</code></td><td>3</td><td>No — 'c' not in Σ</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Σ* — The Universal Set</h2>
+  <div class="callout definition">
+    <div class="callout-label">Definition</div>
+    <p><strong>Σ*</strong> (pronounced "Sigma star") is the set of ALL strings over Σ, including ε.</p>
+    <p>It is always infinite (unless Σ is empty).</p>
+  </div>
+  <div class="math">
+    For Σ = {a, b}:<br>
+    Σ* = {ε, a, b, aa, ab, ba, bb, aaa, aab, aba, ...}
+  </div>
+
+  <h2>Languages</h2>
+  <div class="callout definition">
+    <div class="callout-label">Definition</div>
+    <p>A <strong>language</strong> L over Σ is any subset of Σ*.</p>
+    <p>A language can be finite or infinite, and ∅ (the empty set) and Σ* itself are valid languages.</p>
+  </div>
+  <div class="callout example">
+    <div class="callout-label">Examples</div>
+    <p>Over Σ = {a, b}:</p>
+    <ul>
+      <li>L₁ = {ε, a, b} — finite language with 3 strings</li>
+      <li>L₂ = {aⁿbⁿ | n ≥ 0} = {ε, ab, aabb, aaabbb, ...} — infinite language</li>
+      <li>L₃ = {w | w contains at least one "ab"} — another infinite language</li>
+      <li>L₄ = ∅ — the empty language (no strings at all)</li>
+    </ul>
+  </div>
+
+  <h2>Operations on Languages</h2>
+  <table>
+    <thead><tr><th>Operation</th><th>Symbol</th><th>Meaning</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Union</td><td>L₁ ∪ L₂</td><td>Strings in L₁ OR L₂</td><td>{a} ∪ {b} = {a,b}</td></tr>
+      <tr><td>Intersection</td><td>L₁ ∩ L₂</td><td>Strings in BOTH L₁ and L₂</td><td>{a,b} ∩ {b,c} = {b}</td></tr>
+      <tr><td>Complement</td><td>Σ* − L</td><td>All strings NOT in L</td><td>Σ* − {a} = {ε, b, aa, ab, ...}</td></tr>
+      <tr><td>Concatenation</td><td>L₁ · L₂</td><td>Strings from L₁ followed by strings from L₂</td><td>{ab}·{ba} = {abba}</td></tr>
+      <tr><td>Kleene Star</td><td>L*</td><td>Zero or more concatenations of L</td><td>{ab}* = {ε, ab, abab, ababab, ...}</td></tr>
+      <tr><td>Kleene Plus</td><td>L⁺</td><td>One or more concatenations</td><td>{ab}⁺ = {ab, abab, ...}</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warning">
+    <div class="callout-label">⚡ Key Fact for Exams</div>
+    <p><strong>Every finite language is regular.</strong> This kills many True/False questions! If you see "L = {aⁿbⁿ | n ≤ 100}", don't be fooled — that's a finite set of 101 strings, so it IS regular and its complement IS also regular.</p>
+  </div>
+
+  <h2>What Makes a Language "Regular"?</h2>
+  <p>A language is <strong>regular</strong> if it can be described by any of these equivalent formalisms:</p>
+  <ul>
+    <li>A <strong>DFA</strong> (Deterministic Finite Automaton)</li>
+    <li>An <strong>NFA</strong> (Nondeterministic Finite Automaton)</li>
+    <li>A <strong>Regular Expression</strong></li>
+  </ul>
+  <p>Regular languages are closed under union, intersection, complement, concatenation, and Kleene star. If L is regular, any of these operations on L also produces a regular language.</p>
+
+  <div class="quiz-block">
+    <div class="quiz-q-text">Quick Check: Which of the following is TRUE about Σ*?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="qcheck(this,false,'Σ* is always infinite (for non-empty Σ). It contains ε, every single symbol, every pair, every triple...')">Σ* is a finite set</div>
+      <div class="qopt" onclick="qcheck(this,true,'Correct! ε ∈ Σ* for any alphabet. The Kleene star always includes the empty string.')">ε ∈ Σ* for any non-empty alphabet</div>
+      <div class="qopt" onclick="qcheck(this,false,'Σ* is a set of STRINGS over Σ, not a set of symbols.')">Σ* contains only single symbols</div>
+      <div class="qopt" onclick="qcheck(this,false,'Every language over Σ is a SUBSET of Σ*, not equal to it (unless L = Σ* itself).')">Every language L equals Σ*</div>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(0)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(2)">Next: DFA →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 2: DFA ========== -->
+<div class="lesson-section" id="sec-2">
+  <div class="section-eyebrow">Chapter 03 — Automata</div>
+  <div class="section-title">Deterministic Finite Automata</div>
+  <div class="section-subtitle">The machine that decides if a string belongs to a language.</div>
+
+  <h2>Formal Definition</h2>
+  <div class="callout definition">
+    <div class="callout-label">Definition — DFA</div>
+    <p>A <strong>DFA</strong> M = (Q, Σ, δ, s, F) consists of:</p>
+    <ul>
+      <li><strong>Q</strong> — a finite set of states</li>
+      <li><strong>Σ</strong> — the input alphabet</li>
+      <li><strong>δ: Q × Σ → Q</strong> — the transition function (reads a state + symbol, outputs a state)</li>
+      <li><strong>s ∈ Q</strong> — the start state</li>
+      <li><strong>F ⊆ Q</strong> — the set of accepting (final) states</li>
+    </ul>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-label">⚠️ Critical Property</div>
+    <p>The transition function δ is <strong>total</strong> — every state must have <em>exactly one</em> transition for every symbol in Σ. No missing transitions, no multiple transitions. This is what makes it "deterministic."</p>
+  </div>
+
+  <h2>How a DFA Reads a String</h2>
+  <p>The <strong>extended transition function</strong> δ̂ tells us where we end up after reading a whole string:</p>
+  <div class="math">
+    δ̂(q, ε) = q &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (reading ε stays put)<br>
+    δ̂(q, wa) = δ(δ̂(q, w), a) &nbsp;&nbsp; (read w first, then symbol a)<br><br>
+    String x is <strong>ACCEPTED</strong> by M iff δ̂(s, x) ∈ F
+  </div>
+  <p>In plain English: start at the start state, read the string one symbol at a time following the arrows, and at the end — if you're in an accepting state, accept; otherwise reject.</p>
+
+  <h2>Anatomy of a DFA Diagram</h2>
+  <div class="dfa-diagram">
+    <svg class="automaton" width="500" height="140" viewBox="0 0 500 140">
+      <!-- State q0 (start) -->
+      <circle cx="80" cy="70" r="32" fill="#e8f4f8" stroke="#0f7d8c" stroke-width="2"/>
+      <text x="80" y="75" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#1a1a2e">q₀</text>
+      <!-- Start arrow -->
+      <line x1="20" y1="70" x2="45" y2="70" stroke="#1a1a2e" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="10" y="60" font-family="Outfit" font-size="11" fill="#6b6b80">start</text>
+
+      <!-- State q1 -->
+      <circle cx="230" cy="70" r="32" fill="#e8f4f8" stroke="#0f7d8c" stroke-width="2"/>
+      <text x="230" y="75" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#1a1a2e">q₁</text>
+
+      <!-- State q2 (accepting) - double circle -->
+      <circle cx="390" cy="70" r="32" fill="#f0f7f0" stroke="#1a7a4a" stroke-width="2"/>
+      <circle cx="390" cy="70" r="26" fill="none" stroke="#1a7a4a" stroke-width="2"/>
+      <text x="390" y="75" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#1a1a2e">q₂</text>
+
+      <!-- Transitions -->
+      <!-- q0 -> q0 on 'b' -->
+      <path d="M 65 40 Q 80 10 95 40" fill="none" stroke="#6b6b80" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+      <text x="80" y="12" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#6b6b80">b</text>
+
+      <!-- q0 -> q1 on 'a' -->
+      <line x1="112" y1="70" x2="195" y2="70" stroke="#c9a84c" stroke-width="1.5" marker-end="url(#arrowGold)"/>
+      <text x="155" y="62" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#8a6820">a</text>
+
+      <!-- q1 -> q2 on 'b' -->
+      <line x1="262" y1="70" x2="355" y2="70" stroke="#c9a84c" stroke-width="1.5" marker-end="url(#arrowGold)"/>
+      <text x="310" y="62" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#8a6820">b</text>
+
+      <!-- q1 -> q1 on 'a' -->
+      <path d="M 215 40 Q 230 10 245 40" fill="none" stroke="#6b6b80" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+      <text x="230" y="12" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#6b6b80">a</text>
+
+      <!-- q2 -> q2 on 'a,b' -->
+      <path d="M 375 40 Q 390 10 405 40" fill="none" stroke="#6b6b80" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+      <text x="392" y="12" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#6b6b80">a,b</text>
+
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#1a1a2e"/>
+        </marker>
+        <marker id="arrowGray" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6b6b80"/>
+        </marker>
+        <marker id="arrowGold" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#c9a84c"/>
+        </marker>
+        <marker id="arrowTeal" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#0f7d8c"/>
+        </marker>
+        <marker id="arrowRose" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#c0392b"/>
+        </marker>
+      </defs>
+    </svg>
+    <p style="text-align:center; font-size:0.82rem; color:var(--text-dim); margin-top:0.5rem;">DFA that accepts all strings containing "ab" as a substring. Σ = {a,b}.</p>
+    <p style="text-align:center; font-size:0.8rem; color:var(--text-dim);">→ single arrow = start state &nbsp;|&nbsp; double circle = accepting state</p>
+  </div>
+
+  <h2>Tracing a String Through a DFA</h2>
+  <p>Let's trace the string <code>baab</code> through the DFA above.</p>
+  <div class="math">
+    δ̂(q₀, baab)<br>
+    → read 'b': δ(q₀, b) = q₀ &nbsp; (stay — no 'ab' yet)<br>
+    → read 'a': δ(q₀, a) = q₁ &nbsp; (saw an 'a' — waiting for 'b')<br>
+    → read 'a': δ(q₁, a) = q₁ &nbsp; (another 'a' — still waiting for 'b')<br>
+    → read 'b': δ(q₁, b) = q₂ &nbsp; (got "ab"! → accepting state)<br><br>
+    End state: q₂ ∈ F ✓ &nbsp; → <strong>ACCEPT</strong>
+  </div>
+
+  <h2>Interactive DFA Simulator</h2>
+  <p>Try the DFA for "strings containing ab". Type any string over {a, b}:</p>
+  <div class="simulator">
+    <div class="sim-title">DFA Simulator — L = {w | w contains "ab"}</div>
+    <div class="sim-input-wrap">
+      <input class="sim-input" id="dfa-input" placeholder="Type a string (a/b only)..." oninput="resetSim()" />
+      <button class="sim-btn" onclick="runDFA()">▶ Run</button>
+      <button class="sim-btn secondary" onclick="stepDFA()">Step</button>
+      <button class="sim-btn secondary" onclick="resetSim()">Reset</button>
+    </div>
+    <div id="sim-tape" class="sim-tape"><span style="color:var(--text-dim); font-size:0.85rem;">Enter a string above and press Run.</span></div>
+    <div id="sim-state" class="state-display"></div>
+    <div id="sim-result" class="sim-result"></div>
+  </div>
+
+  <h2>Transition Table</h2>
+  <p>A DFA can also be written as a transition table — every state × symbol combination has exactly one output state.</p>
+  <table>
+    <thead><tr><th>State</th><th>On 'a'</th><th>On 'b'</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>→ q₀</td><td>q₁</td><td>q₀</td><td>Start: haven't seen 'a' yet</td></tr>
+      <tr><td>q₁</td><td>q₁</td><td>q₂</td><td>Just saw 'a', waiting for 'b'</td></tr>
+      <tr><td>★ q₂</td><td>q₂</td><td>q₂</td><td>Saw "ab" — stay accepted forever</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.82rem; color:var(--text-dim);">→ marks start state, ★ marks accepting states</p>
+
+  <div class="quiz-block">
+    <div class="quiz-q-text">What does it mean for a DFA to be "deterministic"?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="qcheck(this,false,'That describes an NFA — multiple paths or missing transitions are allowed in NFAs.')">There can be multiple paths for the same input string</div>
+      <div class="qopt" onclick="qcheck(this,true,'Correct! Each state has exactly one outgoing transition for each input symbol — no ambiguity, no choice.')">From any state, each symbol leads to exactly one next state</div>
+      <div class="qopt" onclick="qcheck(this,false,'The DFA can still reject strings — deterministic just means no ambiguity in transitions.')">The DFA accepts all possible input strings</div>
+      <div class="qopt" onclick="qcheck(this,false,'DFAs don\'t use ε-transitions. Those are for NFAs.')">ε-transitions are used to move between states</div>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(1)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(3)">Next: Building DFAs →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 3: BUILDING DFAs ========== -->
+<div class="lesson-section" id="sec-3">
+  <div class="section-eyebrow">Chapter 04 — Techniques</div>
+  <div class="section-title">Building DFAs — How to Actually Do It</div>
+  <div class="section-subtitle">A systematic approach with worked examples from past exams.</div>
+
+  <h2>The Golden Rule</h2>
+  <div class="highlight-box">
+    <p><strong>States = Memory.</strong> A DFA state represents everything the machine needs to remember about what it has read so far. Ask yourself: "what information do I need to track to decide acceptance?" Each distinct memory value becomes a state.</p>
+  </div>
+
+  <h2>Step-by-Step Method</h2>
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Identify what you need to remember</strong>
+        <p>What about the string read so far determines the outcome? Could be: "last two characters," "count mod 3," "did I see 'ab'?", "am I in a valid prefix?"</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>List all possible memory values → one state each</strong>
+        <p>Add a "dead/trap" state if strings can become permanently rejected. This state has transitions back to itself on every symbol.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Fill in ALL transitions (every state × every symbol)</strong>
+        <p>Every state must have exactly one outgoing edge per symbol. No exceptions.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <strong>Mark start state (→) and accepting states (double circle)</strong>
+        <p>Start = memory for "read nothing." Accepting = memories that indicate the string satisfies the language property.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <strong>Test with examples</strong>
+        <p>Trace at least one string that should be accepted and one that should be rejected. Fix any errors.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Worked Example 1: Strings ending in "ab" <span class="tag exam">2024 Q2</span></h2>
+  <p>Build a DFA with exactly 4 states for L = {x | x ends with "ab"}.</p>
+
+  <div class="callout example">
+    <div class="callout-label">Step 1 — What do we track?</div>
+    <p>We need to know how close we are to completing "ab" at the end. There are 4 distinct situations:</p>
+    <ul>
+      <li><strong>q₀</strong>: Haven't seen any promising suffix (start, or just saw 'b' after non-'a')</li>
+      <li><strong>q₁</strong>: Last character was 'a' (potential start of "ab")</li>
+      <li><strong>q₂</strong>: Last two characters were "ab" ← <em>ACCEPT</em></li>
+      <li><strong>q₃</strong>: Dead/trap (for this example we use it for specific "b" after reset)</li>
+    </ul>
+  </div>
+
+  <p>Actually with 4 states:</p>
+  <table>
+    <thead><tr><th>State</th><th>Meaning</th><th>On 'a'</th><th>On 'b'</th><th>Accepting?</th></tr></thead>
+    <tbody>
+      <tr><td>→ q₀</td><td>Start / "reset" (saw 'b' not preceded by 'a')</td><td>q₁</td><td>q₀</td><td>No</td></tr>
+      <tr><td>q₁</td><td>Last char was 'a'</td><td>q₁</td><td>q₂</td><td>No</td></tr>
+      <tr><td>★ q₂</td><td>Last two chars were "ab"</td><td>q₁</td><td>q₃</td><td>Yes</td></tr>
+      <tr><td>q₃</td><td>Was in "ab" state, then saw 'b' — now just "bb" suffix</td><td>q₁</td><td>q₀</td><td>No</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout example">
+    <div class="callout-label">Verification</div>
+    <p>Trace "aab": q₀ →(a) q₁ →(a) q₁ →(b) q₂ ✓ (accepted — ends in "ab")</p>
+    <p>Trace "aba": q₀ →(a) q₁ →(b) q₂ →(a) q₁ ✗ (rejected — "aba" doesn't end in "ab")</p>
+    <p>Trace "bab": q₀ →(b) q₀ →(a) q₁ →(b) q₂ ✓ (accepted — ends in "ab")</p>
+  </div>
+
+  <h2>Worked Example 2: Binary multiples of 3 <span class="tag exam">2023 Q2</span></h2>
+  <p>Build a DFA for L = {x | x is a binary string representing a multiple of 3}.</p>
+  <div class="callout example">
+    <div class="callout-label">Key Insight</div>
+    <p>Track the value of the string read so far, <em>modulo 3</em>. When you read bit b at the end of a number n, the new value is 2n + b. So we only need 3 states!</p>
+  </div>
+
+  <table>
+    <thead><tr><th>State</th><th>Meaning (value mod 3)</th><th>On '0'</th><th>On '1'</th><th>Accepting?</th></tr></thead>
+    <tbody>
+      <tr><td>→★ q₀</td><td>value ≡ 0 (mod 3)</td><td>q₀</td><td>q₁</td><td>Yes (0 is multiple of 3)</td></tr>
+      <tr><td>q₁</td><td>value ≡ 1 (mod 3)</td><td>q₂</td><td>q₀</td><td>No</td></tr>
+      <tr><td>q₂</td><td>value ≡ 2 (mod 3)</td><td>q₁</td><td>q₂</td><td>No</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout example">
+    <div class="callout-label">Why the transitions work</div>
+    <p>If current value ≡ r (mod 3) and we read bit b, new value = 2r + b.</p>
+    <p>From q₀ (r=0): read 0 → 0 mod 3 = 0 = q₀; read 1 → 1 mod 3 = 1 = q₁ ✓</p>
+    <p>From q₁ (r=1): read 0 → 2 mod 3 = 2 = q₂; read 1 → 3 mod 3 = 0 = q₀ ✓</p>
+    <p>From q₂ (r=2): read 0 → 4 mod 3 = 1 = q₁; read 1 → 5 mod 3 = 2 = q₂ ✓</p>
+    <p><em>For "NOT multiples of 3": flip the accepting states → q₁ and q₂ accept, q₀ doesn't.</em></p>
+  </div>
+
+  <h2>Worked Example 3: Strings where |x| is even</h2>
+  <p>L = {x ∈ Σ* | |x| is even} over Σ = {a, b}.</p>
+  <p>Track length mod 2 — only 2 states needed:</p>
+  <table>
+    <thead><tr><th>State</th><th>Meaning</th><th>On 'a'</th><th>On 'b'</th><th>Accepting?</th></tr></thead>
+    <tbody>
+      <tr><td>→★ q₀</td><td>Even length so far</td><td>q₁</td><td>q₁</td><td>Yes (ε has even length 0)</td></tr>
+      <tr><td>q₁</td><td>Odd length so far</td><td>q₀</td><td>q₀</td><td>No</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warning">
+    <div class="callout-label">⚡ Common Exam Trick</div>
+    <p>When the problem says "exactly 4 states," count carefully. You may need a dead/trap state even if the language seems simple. A trap state has transitions to itself on all symbols and is never accepting.</p>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-q-text">You want a DFA for L = {w | w contains exactly one 'a'}. How many states do you need?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="qcheck(this,false,'2 states isn\'t enough — you can\'t tell apart "haven\'t seen a yet" vs "seen exactly one a" vs "seen two or more a\'s" with just 2 states.')">2 states</div>
+      <div class="qopt" onclick="qcheck(this,true,'Correct! State 1: no a seen yet. State 2: exactly one a (ACCEPT). State 3: two+ a\'s (dead state). Each state handles all b-inputs by staying put.')">3 states</div>
+      <div class="qopt" onclick="qcheck(this,false,'4 states would be one too many — you only need 3 distinct situations.')">4 states</div>
+      <div class="qopt" onclick="qcheck(this,false,'5 would be overly complex for this problem.')">5 states</div>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(2)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(4)">Next: NFAs →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 4: NFA ========== -->
+<div class="lesson-section" id="sec-4">
+  <div class="section-eyebrow">Chapter 05 — Automata</div>
+  <div class="section-title">Nondeterministic Finite Automata</div>
+  <div class="section-subtitle">More expressive to design, same power as DFAs.</div>
+
+  <h2>What Makes an NFA Different?</h2>
+  <div class="callout definition">
+    <div class="callout-label">Definition — NFA</div>
+    <p>An NFA N = (Q, Σ, δ, s, F) is like a DFA but with three relaxations:</p>
+    <ul>
+      <li><strong>δ: Q × (Σ ∪ {ε}) → 2<sup>Q</sup></strong> — transitions return a SET of states (possibly empty)</li>
+      <li>From any state, on any symbol, you can go to <em>zero, one, or many</em> states</li>
+      <li><strong>ε-transitions</strong> are allowed — free moves without consuming input</li>
+    </ul>
+    <p style="margin-top:0.8rem;"><strong>Acceptance:</strong> A string is accepted if <em>there EXISTS at least one</em> computation path that ends in an accepting state.</p>
+  </div>
+
+  <h2>DFA vs NFA — Side by Side</h2>
+  <table>
+    <thead><tr><th>Feature</th><th>DFA</th><th>NFA</th></tr></thead>
+    <tbody>
+      <tr><td>Transitions per symbol</td><td>Exactly 1</td><td>0, 1, or many</td></tr>
+      <tr><td>ε-transitions</td><td>❌ Not allowed</td><td>✅ Allowed</td></tr>
+      <tr><td>Acceptance rule</td><td>The (unique) end state ∈ F</td><td>ANY path ends in F</td></tr>
+      <tr><td>Languages recognized</td><td>Regular only</td><td>Regular only (same!)</td></tr>
+      <tr><td>Design effort</td><td>More states, more complex</td><td>Often simpler to design</td></tr>
+      <tr><td>State count</td><td>Can be up to 2ⁿ more states</td><td>Often exponentially fewer</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warning">
+    <div class="callout-label">⚠️ Critical Point</div>
+    <p>Despite the differences, <strong>NFA and DFA recognize exactly the same class of languages</strong> — the regular languages. For every NFA there exists an equivalent DFA, and vice versa. This is a theorem, not just a claim.</p>
+  </div>
+
+  <h2>Why Use NFAs Then?</h2>
+  <p>NFAs are <strong>much easier to design</strong> for many languages. You can "guess" which branch to take, knowing one accepting path is enough. The machine is conceptually parallel — imagine it exploring all paths at once.</p>
+
+  <div class="callout example">
+    <div class="callout-label">Example — NFA for "strings ending in 11"</div>
+    <p>Σ = {0,1}. This NFA nondeterministically "guesses" when the last two symbols are about to be "11".</p>
+  </div>
+
+  <div class="dfa-diagram">
+    <svg class="automaton" width="420" height="130" viewBox="0 0 420 130">
+      <!-- q0 -->
+      <circle cx="70" cy="65" r="30" fill="#e8f4f8" stroke="#0f7d8c" stroke-width="2"/>
+      <text x="70" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#1a1a2e">q₀</text>
+      <line x1="15" y1="65" x2="38" y2="65" stroke="#1a1a2e" stroke-width="2" marker-end="url(#arrow)"/>
+      <!-- q1 -->
+      <circle cx="220" cy="65" r="30" fill="#e8f4f8" stroke="#0f7d8c" stroke-width="2"/>
+      <text x="220" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#1a1a2e">q₁</text>
+      <!-- q2 accepting -->
+      <circle cx="370" cy="65" r="30" fill="#f0f7f0" stroke="#1a7a4a" stroke-width="2"/>
+      <circle cx="370" cy="65" r="24" fill="none" stroke="#1a7a4a" stroke-width="2"/>
+      <text x="370" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#1a1a2e">q₂</text>
+
+      <!-- q0 self-loop on 0,1 -->
+      <path d="M 55 37 Q 70 8 85 37" fill="none" stroke="#6b6b80" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+      <text x="70" y="8" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#6b6b80">0,1</text>
+      <!-- q0 -> q1 on 1 -->
+      <line x1="100" y1="65" x2="188" y2="65" stroke="#c9a84c" stroke-width="1.5" marker-end="url(#arrowGold)"/>
+      <text x="143" y="57" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#8a6820">1</text>
+      <!-- q1 -> q2 on 1 -->
+      <line x1="250" y1="65" x2="338" y2="65" stroke="#c9a84c" stroke-width="1.5" marker-end="url(#arrowGold)"/>
+      <text x="293" y="57" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#8a6820">1</text>
+    </svg>
+    <p style="text-align:center; font-size:0.82rem; color:var(--text-dim); margin-top:0.5rem;">NFA for L = {w | w ends in "11"}. The nondeterminism happens at q₀ on '1' — the machine can stay at q₀ OR move to q₁.</p>
+  </div>
+
+  <h2>Tracing an NFA — Parallel Computation</h2>
+  <p>Think of an NFA as running ALL possible paths simultaneously. When you hit a fork (e.g., on '1' from q₀ you can go to q₀ OR q₁), the machine splits and pursues both.</p>
+
+  <div class="math">
+    Trace "011" through the NFA:<br><br>
+    Start: {q₀}<br>
+    Read '0': from q₀ on '0' → {q₀} &nbsp;&nbsp;&nbsp;&nbsp; → Current set: {q₀}<br>
+    Read '1': from q₀ on '1' → {q₀, q₁} &nbsp; → Current set: {q₀, q₁}<br>
+    Read '1': from q₀ on '1' → {q₀, q₁}; from q₁ on '1' → {q₂} → Current set: {q₀, q₁, q₂}<br><br>
+    End: {q₀, q₁, q₂} ∩ F = {q₂} ≠ ∅ → <strong>ACCEPT ✓</strong>
+  </div>
+
+  <h2>ε-transitions</h2>
+  <p>ε-transitions let you move to another state <em>without reading any input</em>. They're extremely useful for designing NFAs by composing smaller pieces.</p>
+  <div class="callout example">
+    <div class="callout-label">Example</div>
+    <p>An NFA for L((aa+b)*(bb+a)*) might use ε-transitions to connect the two halves, meaning: "guess" when you've finished the first half and are starting the second.</p>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-q-text">An NFA is in state set {q₁, q₂} after reading some string. q₂ is an accepting state. The string...</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="qcheck(this,false,'It doesn\'t matter that q₁ is not accepting — NFAs accept if ANY of the current states is accepting.')">Is rejected because q₁ is not accepting</div>
+      <div class="qopt" onclick="qcheck(this,true,'Correct! In an NFA, a string is accepted if ANY of the states the machine could be in is an accepting state. q₂ ∈ F, so we accept.')">Is accepted because q₂ ∈ F</div>
+      <div class="qopt" onclick="qcheck(this,false,'The NFA doesn\'t need all states to be accepting — just one.')">Is only accepted if both q₁ and q₂ are accepting</div>
+      <div class="qopt" onclick="qcheck(this,false,'Being in multiple states is perfectly normal for an NFA.')">Cannot be in two states at once — this is an error</div>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(3)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(5)">Next: Subset Construction →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 5: SUBSET CONSTRUCTION ========== -->
+<div class="lesson-section" id="sec-5">
+  <div class="section-eyebrow">Chapter 06 — Constructions</div>
+  <div class="section-title">Subset Construction (NFA → DFA)</div>
+  <div class="section-subtitle">The algorithm that proves NFA = DFA in power.</div>
+
+  <h2>The Core Idea</h2>
+  <p>A DFA must be deterministic — at any point it's in <em>one</em> state. But when simulating an NFA, we might be in <em>multiple</em> states at once. The insight: <strong>make those sets of NFA states become single DFA states.</strong></p>
+
+  <div class="highlight-box">
+    <p><strong>Key Idea:</strong> Each DFA state is a <em>set</em> of NFA states. The DFA tracks "which NFA states could we possibly be in right now?"</p>
+  </div>
+
+  <h2>The Algorithm</h2>
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Start state = {s<sub>NFA</sub>}</strong>
+        <p>The DFA starts in the set containing only the NFA's start state. (Include ε-closure if there are ε-transitions.)</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>For each DFA state S and each symbol a, compute δ<sub>DFA</sub>(S, a)</strong>
+        <div class="math" style="margin:0.5rem 0">δ<sub>DFA</sub>(S, a) = ∪<sub>q ∈ S</sub> δ<sub>NFA</sub>(q, a)</div>
+        <p>Collect all NFA states reachable from any state in S by reading a.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Add any new sets as new DFA states</strong>
+        <p>Keep a worklist. Process each unvisited DFA state. ∅ (empty set) is a valid dead state — it transitions to itself on everything.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <strong>Accepting DFA states = any set containing an NFA accepting state</strong>
+        <div class="math" style="margin:0.5rem 0">S is accepting ⟺ S ∩ F<sub>NFA</sub> ≠ ∅</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Worked Example: NFA for "strings ending in 11"</h2>
+  <p>NFA: Q = {q₀, q₁, q₂}, Σ = {0,1}, s = q₀, F = {q₂}</p>
+  <p>NFA transitions: δ(q₀,0)={q₀}, δ(q₀,1)={q₀,q₁}, δ(q₁,0)=∅, δ(q₁,1)={q₂}, δ(q₂,0)=∅, δ(q₂,1)=∅</p>
+
+  <h3>Build the Subset Table</h3>
+
+  <table class="sc-table">
+    <thead><tr><th>DFA State (Set)</th><th>On '0'</th><th>On '1'</th><th>Accepting?</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>→ {q₀}</td>
+        <td>δ(q₀,0) = {q₀}</td>
+        <td>δ(q₀,1) = {q₀,q₁}</td>
+        <td>No (q₂ ∉ {q₀})</td>
+      </tr>
+      <tr class="new-row">
+        <td>{q₀,q₁}</td>
+        <td>δ(q₀,0)∪δ(q₁,0) = {q₀}∪∅ = {q₀}</td>
+        <td>δ(q₀,1)∪δ(q₁,1) = {q₀,q₁}∪{q₂} = {q₀,q₁,q₂}</td>
+        <td>No</td>
+      </tr>
+      <tr class="new-row accept-row">
+        <td>★ {q₀,q₁,q₂}</td>
+        <td>δ(q₀,0)∪δ(q₁,0)∪δ(q₂,0) = {q₀}</td>
+        <td>δ(q₀,1)∪δ(q₁,1)∪δ(q₂,1) = {q₀,q₁,q₂}</td>
+        <td>Yes ✓ (q₂ ∈ this set)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>We only generated 3 DFA states — no others were reachable. The final DFA has states {q₀}, {q₀,q₁}, {q₀,q₁,q₂} with the last one accepting.</p>
+
+  <div class="callout warning">
+    <div class="callout-label">⚡ Exam Tip</div>
+    <p>Always present subset construction as a table. The table format is exactly what the marker expects and makes your work easy to follow. Show the computation for each cell: "δ(q₀,0) ∪ δ(q₁,0) = ..."</p>
+  </div>
+
+  <h2>How Many States Can You Get?</h2>
+  <p>An NFA with n states can produce a DFA with up to <strong>2<sup>n</sup> states</strong> (one for each possible subset). In practice, usually far fewer subsets are reachable. In exam problems, you typically get 3–6 DFA states.</p>
+
+  <div class="quiz-block">
+    <div class="quiz-q-text">In subset construction, when is a DFA state S an accepting state?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="qcheck(this,false,'Not just the start state — any reachable set that contains an NFA accepting state.')">Only if S is the start state</div>
+      <div class="qopt" onclick="qcheck(this,false,'S must be a set of NFA states. Requiring all states in S to accept would be overly restrictive.')">If all NFA states in S are accepting</div>
+      <div class="qopt" onclick="qcheck(this,true,'Correct! If the NFA could possibly be in an accepting state, we accept. One accepting NFA state in the set is enough.')">If S contains at least one NFA accepting state</div>
+      <div class="qopt" onclick="qcheck(this,false,'The empty set ∅ is a valid DFA dead state — but it\'s never accepting (since it contains no NFA states at all, let alone accepting ones).')">If S is the empty set ∅</div>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(4)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(6)">Next: Product Construction →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 6: PRODUCT CONSTRUCTION ========== -->
+<div class="lesson-section" id="sec-6">
+  <div class="section-eyebrow">Chapter 07 — Constructions</div>
+  <div class="section-title">Product Construction</div>
+  <div class="section-subtitle">Combining two DFAs for union and intersection.</div>
+
+  <h2>The Idea</h2>
+  <p>Given two DFAs M₁ and M₂, the product construction builds a new DFA that runs <em>both simultaneously</em>. Each state of the product DFA is a pair (p, q) — one state from each machine.</p>
+
+  <div class="math">
+    Given M₁ = (Q₁, Σ, δ₁, s₁, F₁) and M₂ = (Q₂, Σ, δ₂, s₂, F₂):<br><br>
+    Product DFA M = (Q₁ × Q₂, Σ, δ, (s₁,s₂), F) where:<br>
+    δ((p, q), a) = (δ₁(p, a), δ₂(q, a))<br><br>
+    <strong>For UNION (L₁ ∪ L₂):</strong><br>
+    F = {(p,q) | p ∈ F₁ <strong>OR</strong> q ∈ F₂}<br><br>
+    <strong>For INTERSECTION (L₁ ∩ L₂):</strong><br>
+    F = {(p,q) | p ∈ F₁ <strong>AND</strong> q ∈ F₂}<br><br>
+    <strong>For DIFFERENCE (L₁ \ L₂):</strong><br>
+    F = {(p,q) | p ∈ F₁ <strong>AND</strong> q ∉ F₂}
+  </div>
+
+  <h2>Worked Example <span class="tag exam">2024 Q3</span></h2>
+  <p>Build DFAs for:</p>
+  <ul>
+    <li>M₁: L(M₁) = {x | |x| mod 2 = 0} — strings of even length</li>
+    <li>M₂: L(M₂) = {x | |x| mod 3 = 0} — strings whose length is divisible by 3</li>
+  </ul>
+
+  <div class="callout example">
+    <div class="callout-label">M₁: Even length (Σ = {a,b})</div>
+    <p>States: e (even, ACCEPT), o (odd). Start: e. δ(e,a)=δ(e,b)=o, δ(o,a)=δ(o,b)=e.</p>
+  </div>
+
+  <div class="callout example">
+    <div class="callout-label">M₂: Length divisible by 3</div>
+    <p>States: 0 (ACCEPT), 1, 2. Start: 0. Every symbol increments count mod 3: δ(0,a)=δ(0,b)=1, δ(1,a)=δ(1,b)=2, δ(2,a)=δ(2,b)=0.</p>
+  </div>
+
+  <h3>Product for M₃ = M₁ ∪ M₂</h3>
+  <p>States: (e,0), (e,1), (e,2), (o,0), (o,1), (o,2). Start: (e,0). Accept if p∈F₁ OR q∈F₂.</p>
+
+  <table>
+    <thead><tr><th>State</th><th>On any symbol</th><th>Accept? (even OR div3)</th></tr></thead>
+    <tbody>
+      <tr><td>★ (e, 0)</td><td>(o, 1)</td><td>Yes — e∈F₁ AND 0∈F₂</td></tr>
+      <tr><td>★ (e, 1)</td><td>(o, 2)</td><td>Yes — e∈F₁</td></tr>
+      <tr><td>★ (e, 2)</td><td>(o, 0)</td><td>Yes — e∈F₁</td></tr>
+      <tr><td>★ (o, 0)</td><td>(e, 1)</td><td>Yes — 0∈F₂</td></tr>
+      <tr><td>(o, 1)</td><td>(e, 2)</td><td>No</td></tr>
+      <tr><td>(o, 2)</td><td>(e, 0)</td><td>No</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Product for M₄ = M₁ ∩ M₂</h3>
+  <p>Same structure, but accept only when BOTH are in accepting states (even AND divisible by 3 = divisible by 6):</p>
+  <table>
+    <thead><tr><th>State</th><th>Accept? (even AND div3)</th></tr></thead>
+    <tbody>
+      <tr><td>★ (e, 0)</td><td>Yes</td></tr>
+      <tr><td>(e, 1)</td><td>No</td></tr>
+      <tr><td>(e, 2)</td><td>No</td></tr>
+      <tr><td>(o, 0)</td><td>No</td></tr>
+      <tr><td>(o, 1)</td><td>No</td></tr>
+      <tr><td>(o, 2)</td><td>No</td></tr>
+    </tbody>
+  </table>
+  <p>For intersection, only strings of length divisible by 6 are accepted — makes sense!</p>
+
+  <div class="callout warning">
+    <div class="callout-label">⚡ Memory Trick</div>
+    <p><strong>Union = OR = lenient</strong> (accept if either machine accepts)<br>
+    <strong>Intersection = AND = strict</strong> (accept only if both accept)</p>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(5)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(7)">Next: Regular Expressions →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 7: REGEX INTRO ========== -->
+<div class="lesson-section" id="sec-7">
+  <div class="section-eyebrow">Chapter 08 — Regular Expressions</div>
+  <div class="section-title">Regular Expressions</div>
+  <div class="section-subtitle">A concise algebraic language for describing regular languages.</div>
+
+  <h2>Why Regular Expressions?</h2>
+  <p>Building a DFA or NFA can be tedious. Regular expressions (regex) give us a <strong>compact algebraic notation</strong> for describing the same languages, and they're much easier to write. They're also equivalent — every regex corresponds to an NFA and vice versa.</p>
+
+  <h2>The Building Blocks</h2>
+  <table>
+    <thead><tr><th>Expression</th><th>Language it denotes</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><code>∅</code></td><td>The empty language — no strings</td><td>(nothing)</td></tr>
+      <tr><td><code>ε</code></td><td>The language {ε} — only the empty string</td><td>""</td></tr>
+      <tr><td><code>a</code> (any symbol)</td><td>The language {a} — just that one symbol</td><td>"a"</td></tr>
+      <tr><td><code>r + s</code></td><td>L(r) ∪ L(s) — strings from r OR s</td><td><code>a+b</code> → {a, b}</td></tr>
+      <tr><td><code>rs</code></td><td>L(r) · L(s) — strings from r then s</td><td><code>ab</code> → {ab}</td></tr>
+      <tr><td><code>r*</code></td><td>L(r)* — zero or more repetitions of r</td><td><code>a*</code> → {ε, a, aa, ...}</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Operator Precedence (High to Low)</h2>
+  <div class="math">
+    1. * (Kleene star)     — highest, applies to smallest possible expression<br>
+    2. Concatenation       — middle, left-to-right<br>
+    3. + (union)           — lowest, applies to largest possible expressions<br><br>
+    Examples:<br>
+    ab* = a(b*)       — star binds to b only<br>
+    a+bc = a+(bc)     — + is lowest, so bc is one piece<br>
+    (a+b)* = any combo of a's and b's in any order
+  </div>
+
+  <h2>Essential Shorthands</h2>
+  <table>
+    <thead><tr><th>Shorthand</th><th>Equivalent</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><code>r+</code></td><td><code>rr*</code></td><td>One or more r's</td></tr>
+      <tr><td><code>r?</code></td><td><code>ε + r</code></td><td>Zero or one r (optional)</td></tr>
+      <tr><td><code>(a+b)</code></td><td>any a or b</td><td>Often written Σ when Σ={a,b}</td></tr>
+      <tr><td><code>(a+b)*</code></td><td>Σ*</td><td>Any string over {a,b}</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout example">
+    <div class="callout-label">Reading Regex Aloud</div>
+    <p><code>(bb + a)*(aa + b)*</code> reads as: "zero or more occurrences of (bb or a), followed by zero or more occurrences of (aa or b)."</p>
+    <p>This matches strings like: ε, a, bb, aaa, bba, bbaa, aab, ...</p>
+  </div>
+
+  <h2>Interactive Regex Pattern Tester</h2>
+  <div class="regex-tester">
+    <div class="sim-title">Regex String Checker</div>
+    <p style="font-size:0.82rem; color:var(--text-dim); margin-bottom:1rem;">Try common exam patterns. Enter a test string and see if it matches.</p>
+    <div class="regex-examples">
+      <button class="regex-ex-btn" onclick="loadRegex('b*a*','strings with no ab')">b*a* (no ab)</button>
+      <button class="regex-ex-btn" onclick="loadRegex('(b+ab)*(a+ε)','no consecutive aa')">no consec aa</button>
+      <button class="regex-ex-btn" onclick="loadRegex('(a+b)(a+b)(a+b)*(a+b)','odd length')">odd length</button>
+      <button class="regex-ex-btn" onclick="loadRegex('(a+b)*ab(a+b)*','contains ab')">contains ab</button>
+    </div>
+    <div class="regex-row">
+      <div class="regex-field">
+        <label>Pattern (description)</label>
+        <input type="text" id="rx-pattern" value="b*a*" readonly style="color:var(--text-dim)"/>
+      </div>
+      <div class="regex-field">
+        <label>Test String</label>
+        <input type="text" id="rx-test" placeholder="e.g. bba" oninput="testRegex()"/>
+      </div>
+    </div>
+    <div id="rx-result" style="font-family:var(--mono); font-size:0.9rem; padding:0.5rem; border-radius:6px;"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-q-text">What does <code>a*b+</code> describe?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="qcheck(this,false,'a* means zero or more a\'s — ε is included. And b+ requires at least one b, not zero.')">Exactly one 'a' and exactly one 'b'</div>
+      <div class="qopt" onclick="qcheck(this,false,'Concatenation is a then b — they can\'t be mixed. This isn\'t "any combination."')">Any mix of a\'s and b\'s</div>
+      <div class="qopt" onclick="qcheck(this,true,'Correct! a* = zero or more a\'s, then b+ = one or more b\'s. So strings like b, ab, aab, abb, aabb, etc.')">Zero or more a's followed by one or more b's</div>
+      <div class="qopt" onclick="qcheck(this,false,'b+ means one or more b\'s, not zero. b* would allow zero b\'s.')">Zero or more a's followed by zero or more b's</div>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(6)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(8)">Next: Writing Regex →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 8: WRITING REGEX ========== -->
+<div class="lesson-section" id="sec-8">
+  <div class="section-eyebrow">Chapter 09 — Regular Expressions</div>
+  <div class="section-title">Writing Regular Expressions</div>
+  <div class="section-subtitle">Every exam pattern, with full worked solutions.</div>
+
+  <h2>Strategy: Think in Constraints</h2>
+  <p>To write a regex for "all strings satisfying property X," ask yourself:</p>
+  <ol>
+    <li>What can come <em>before</em> and <em>after</em> the key pattern?</li>
+    <li>Can I break this into cases (use <code>+</code>)?</li>
+    <li>What characters are <em>forbidden</em> in what positions?</li>
+    <li>Am I tracking a count? Think mod — or use DFA reasoning then write regex from that.</li>
+  </ol>
+
+  <div class="accordion">
+
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        Pattern 1: All strings NOT containing "ab" <span class="tag exam">2023 Q4a</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <p><strong>Key insight:</strong> If 'a' is followed by 'b' anywhere, the string is rejected. So once we see any 'a', we can <em>never</em> see a 'b' afterward. This means: all the b's come before all the a's.</p>
+          <p><strong>Answer: <code>b*a*</code></strong></p>
+          <p>Test: "ba" ✓, "bba" ✓, "aaa" ✓, "bbb" ✓, "ε" ✓, "ab" ✗ (correct!), "bab" ✗ (correct!)</p>
+          <p><em>Note: "bab" fails because after the middle 'a', there's a 'b'.</em></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        Pattern 2: All strings with ODD length <span class="tag exam">2023 Q4b</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <p><strong>Key insight:</strong> An odd-length string can be written as: one character, then any number of pairs of characters.</p>
+          <p><strong>Answer: <code>(a+b)((a+b)(a+b))*</code></strong></p>
+          <p>Or equivalently: <code>((a+b)(a+b))*(a+b)</code></p>
+          <p>The pattern picks any single symbol, then zero or more pairs. Total: 1 + 2k = odd ✓</p>
+          <p>Test: "a" (length 1 ✓), "abc"... actually "aba" (length 3 ✓), "ab" (length 2 ✗ correct).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        Pattern 3: No CONSECUTIVE a's <span class="tag exam">2023 Q4c</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <p><strong>Key insight:</strong> Every 'a' must be immediately followed by a 'b' (or end the string). So a's can only appear as "ab" blocks, except possibly a final 'a'.</p>
+          <p><strong>Answer: <code>b*(ab*)*(ε+a)</code></strong> or equivalently <code>(b+ab)*(ε+a)</code></p>
+          <p>Reading: any number of b's, then any number of (a followed by b's), optionally ending in a single a.</p>
+          <p>Test: "aba" ✓, "abab" ✓, "b" ✓, "ε" ✓, "aa" ✗ (correct!), "bab" ✓, "baa" ✗ (correct!)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        Pattern 4: Exactly ONE pair of consecutive a's <span class="tag exam">2023 Q4d</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <p><strong>Key insight:</strong> The string must contain "aa" exactly once, and no other consecutive a's. This means: before and after the "aa", we can have anything EXCEPT another "aa". Use the "no consecutive a's" pattern around the "aa".</p>
+          <p>Let NO_AA = <code>(b+ab)*(ε+a)</code> = strings with no consecutive a's.</p>
+          <p><strong>Answer: <code>(b+ab)* aa (b+ab)*(ε+a)</code></strong></p>
+          <p>But wait — we also need to make sure there's no 'a' immediately before or after the "aa" that would create a run of 3+ a's. Adjust:</p>
+          <p><strong>Refined: <code>(b+ab)* b aa b (ab+b)* (ε+a)</code></strong> (if the "aa" is in the middle)</p>
+          <p>This is tricky — full solution requires careful case analysis based on whether "aa" appears at start/end/middle.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        Pattern 5: Number of b's NOT a multiple of 3 <span class="tag exam">2023 Q4e</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <p><strong>Key insight:</strong> The number of b's is 1, 2, 4, 5, 7, 8, ... (not 0, 3, 6, 9...). Split into two cases: #b ≡ 1 (mod 3) or #b ≡ 2 (mod 3).</p>
+          <p>Let A = <code>a*</code> (any number of a's, used between b's)</p>
+          <p>Let GRP = <code>a*ba*ba*ba*</code> = exactly 3 b's with any a's</p>
+          <p><strong>For #b ≡ 1 (mod 3):</strong> <code>a*(ba*ba*ba*)* b a*</code> — groups of 3 b's, plus 1 extra</p>
+          <p><strong>For #b ≡ 2 (mod 3):</strong> <code>a*(ba*ba*ba*)* b a* b a*</code> — groups of 3 b's, plus 2 extra</p>
+          <p><strong>Answer:</strong> union of both cases with <code>+</code>.</p>
+          <p><em>Tip: on the exam, these counting patterns are often better designed as a DFA first, then described in English.</em></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        Pattern 6: Strings containing BOTH "00" and "11" <span class="tag exam">2024 Q4a</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <p><strong>Key insight:</strong> Either "00" comes before "11" or "11" comes before "00".</p>
+          <p>Let ANY = <code>(0+1)*</code></p>
+          <p><strong>Answer: <code>(0+1)* 00 (0+1)* 11 (0+1)* + (0+1)* 11 (0+1)* 00 (0+1)*</code></strong></p>
+          <p>Or more concisely since the parts can overlap: you need any string that has at least one "00" AND at least one "11" somewhere. The two cases cover whether "00" or "11" appears first.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        Pattern 7: Length NOT a multiple of 3 <span class="tag exam">2024 Q4b</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <p><strong>Key insight:</strong> Length ≡ 1 (mod 3) OR length ≡ 2 (mod 3).</p>
+          <p>Let Σ = <code>(0+1)</code>.</p>
+          <p><strong>Answer: <code>Σ(ΣΣΣ)* + ΣΣ(ΣΣΣ)*</code></strong></p>
+          <p>First part: lengths 1, 4, 7, ... (≡ 1 mod 3)</p>
+          <p>Second part: lengths 2, 5, 8, ... (≡ 2 mod 3)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        Pattern 8: Reading a regex from a DFA diagram <span class="tag exam">2024/2025 Q4</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <p><strong>Strategy — State Elimination Method:</strong></p>
+          <ol>
+            <li>If multiple accepting states, add a new single accepting state with ε-transitions from each.</li>
+            <li>Add a new start state with ε-transition to the original start.</li>
+            <li>Eliminate states one by one: for each state q being eliminated, for each pair (p, r) of predecessor and successor, add a direct transition labeled <code>p_to_q · q_loop* · q_to_r</code>.</li>
+            <li>When only start and accept remain, the label on the remaining transition is your regex.</li>
+          </ol>
+          <p>This is algebraic and mechanical — practice it on the 2024 Q4d and 2025 Q4c diagrams.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(7)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(9)">Next: Conversions →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 9: CONVERSIONS ========== -->
+<div class="lesson-section" id="sec-9">
+  <div class="section-eyebrow">Chapter 10 — Conversions</div>
+  <div class="section-title">Regex ↔ Automaton Conversions</div>
+  <div class="section-subtitle">Going back and forth between the three representations.</div>
+
+  <h2>The Conversion Map</h2>
+  <div class="math">
+    Regex ──────────────→ NFA    (Thompson's Construction)<br>
+      ↑                    │<br>
+      │          Subset Construction<br>
+    State Elimination      │<br>
+      │                    ↓<br>
+    DFA ←────────────── DFA    (already a DFA — just simplify)
+  </div>
+
+  <h2>Regex → NFA (Thompson's Construction)</h2>
+  <p>Build NFAs for primitive cases, then combine with ε-transitions.</p>
+
+  <table>
+    <thead><tr><th>Regex</th><th>NFA Structure</th></tr></thead>
+    <tbody>
+      <tr><td><code>a</code> (single symbol)</td><td>→(s) —a→ ((t))</td></tr>
+      <tr><td><code>r + s</code> (union)</td><td>New start → ε → NFA_r; New start → ε → NFA_s; both old accepts → ε → new accept</td></tr>
+      <tr><td><code>rs</code> (concat)</td><td>NFA_r's accept → ε → NFA_s's start</td></tr>
+      <tr><td><code>r*</code> (star)</td><td>New start/accept → ε → NFA_r start; NFA_r accept → ε → NFA_r start (loop); NFA_r accept → ε → new accept; new start → ε → new accept</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout example">
+    <div class="callout-label">Example — NFA for a*aab* <span class="tag exam">2025 Q4a</span></div>
+    <p>This is: (a*)(aa)(b*) — three concatenated pieces.</p>
+    <ol>
+      <li>Build NFA for a* → a loop state</li>
+      <li>Build NFA for aa → two consecutive a-transitions</li>
+      <li>Build NFA for b* → a b loop state</li>
+      <li>Connect with ε-transitions: a* accept → ε → aa start, aa accept → ε → b* start</li>
+    </ol>
+    <p>Or just draw it directly: →(q₀) —a→ (q₀) self-loop, then —a→ (q₁) —a→ (q₂) —b→ ((q₂)) with b self-loop. Note q₀ loops on 'a', then eventually takes 'a' to q₁, another 'a' to q₂ (accepting), b's stay at q₂.</p>
+  </div>
+
+  <h2>Regex → DFA Directly</h2>
+  <p>For many exam problems, you can build a DFA directly from a regex by thinking about what the regex means. Identify the states (what do you need to remember?) and fill in transitions.</p>
+
+  <div class="callout example">
+    <div class="callout-label">Example — DFA for (aa+b)*(bb+a)* <span class="tag exam">2025 Q2b</span></div>
+    <p>This language = "any number of (aa or b) blocks, then any number of (bb or a) blocks." The key: in the first part, a's come in pairs; in the second, b's come in pairs.</p>
+    <p>States needed: track "which part are we in" and "did we see an odd a or b."</p>
+    <p>This is complex — for exam purposes, build the NFA first (much easier!) then convert via subset construction if a DFA is required.</p>
+  </div>
+
+  <h2>DFA → Regex (State Elimination)</h2>
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-body"><strong>Add new start state q<sub>s</sub></strong> with ε-transition to old start state.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-body"><strong>Add new accepting state q<sub>f</sub></strong> with ε-transitions from all old accepting states.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Eliminate interior states one by one.</strong>
+        When eliminating state q with self-loop R (or ε if no loop):
+        <p>For each pair of states p (that goes to q) and r (that q goes to), add a direct p→r edge labeled: <code>(label of p→q)(R*)(label of q→r)</code></p>
+        <p>If there was already a p→r edge, take the union (+) of old and new labels.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-body"><strong>When only q<sub>s</sub> and q<sub>f</sub> remain</strong>, the label on q<sub>s</sub>→q<sub>f</sub> is your regex.</div>
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-label">Exam Note</div>
+    <p>For the 2025 Q4c and Q4d diagrams, state elimination is the intended approach. Practice doing it on small 3-state DFAs. The algebra can get messy — simplify as you go.</p>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(8)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(10)">Next: State Equivalence →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 10: STATE EQUIVALENCE ========== -->
+<div class="lesson-section" id="sec-10">
+  <div class="section-eyebrow">Chapter 11 — Theory</div>
+  <div class="section-title">State Equivalence</div>
+  <div class="section-subtitle">The concept behind DFA minimization — and a recurring exam trap.</div>
+
+  <h2>Definition</h2>
+  <div class="callout definition">
+    <div class="callout-label">Definition</div>
+    <p>Two states p and q in a DFA are <strong>equivalent</strong> (written p ≡ q) if:</p>
+    <div class="math">∀x ∈ Σ*: δ̂(p, x) ∈ F ⟺ δ̂(q, x) ∈ F</div>
+    <p>In plain English: from <em>both</em> p and q, the same set of strings leads to acceptance. They behave identically for all future inputs.</p>
+  </div>
+
+  <h2>The Exam Trap — Two Common Confusions</h2>
+  <div class="callout danger">
+    <div class="callout-label">⚠️ Critical Distinction — Appears Every Exam</div>
+    <p><strong>p ≡ q does NOT mean δ(p,a) = δ(q,a)</strong></p>
+    <p>Equivalent states can have transitions going to <em>different</em> states — as long as those different states are themselves equivalent to each other.</p>
+    <p style="margin-top:0.8rem;"><strong>Example:</strong> Suppose q₀ and q₁ both reject all future inputs. They're equivalent. But δ(q₀, a) = q₂ and δ(q₁, a) = q₃, where q₂ and q₃ are also equivalent to each other. So p≡q but δ(p,a) ≠ δ(q,a).</p>
+  </div>
+
+  <div class="callout danger">
+    <div class="callout-label">⚠️ The Other Direction — Also an Exam Trap</div>
+    <p><strong>If p ∈ F and q ∉ F → p and q are definitely NOT equivalent</strong></p>
+    <p>Proof: use x = ε as the witness. δ̂(p, ε) = p ∈ F (p accepts ε), but δ̂(q, ε) = q ∉ F (q rejects ε). Since they disagree on ε, they're not equivalent.</p>
+    <p>This is TRUE and appears as a True/False claim. It's always TRUE.</p>
+  </div>
+
+  <h2>How to Check Equivalence</h2>
+  <p>Two states p and q are NOT equivalent if there exists a "distinguishing string" x such that exactly one of δ̂(p,x) ∈ F and δ̂(q,x) ∈ F holds.</p>
+
+  <div class="callout example">
+    <div class="callout-label">Example</div>
+    <p>In a DFA for "strings containing ab": is q₀ ≡ q₁?</p>
+    <p>From q₀: reading "ab" → q₂ (accept). From q₁: reading "b" → q₂ (accept), actually reading "ab" from q₁: a→q₁, b→q₂ (accept). Same!</p>
+    <p>But from q₀: reading "b" stays at q₀ (reject for ε after). From q₁: reading "b" → q₂ (accept). So x="b" is a distinguishing string → q₀ ≢ q₁.</p>
+  </div>
+
+  <h2>Summary of Key Claims</h2>
+  <table>
+    <thead><tr><th>Claim</th><th>True/False</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>p ≡ q → ∀a: δ(p,a) = δ(q,a)</td><td style="color:var(--rose)">FALSE</td><td>Transitions can differ but lead to equivalent states</td></tr>
+      <tr><td>p ≡ q → ∀a: δ(p,a) ≡ δ(q,a)</td><td style="color:var(--green)">TRUE</td><td>This is what equivalence actually guarantees</td></tr>
+      <tr><td>p∈F, q∉F → p ≢ q</td><td style="color:var(--green)">TRUE</td><td>ε witnesses the difference</td></tr>
+      <tr><td>p ≢ q → ∃a: δ(p,a) ≠ δ(q,a)</td><td style="color:var(--rose)">FALSE</td><td>Different transitions can still lead to equivalent states; non-equivalence is about future behavior, not immediate transitions</td></tr>
+    </tbody>
+  </table>
+
+  <div class="quiz-block">
+    <div class="quiz-q-text">States p and q are equivalent (p ≡ q). Which of the following MUST be true?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="qcheck(this,false,'Equivalent doesn\'t mean identical. Transitions can go to different states, as long as those states are also equivalent.')">δ(p, a) = δ(q, a) for every symbol a</div>
+      <div class="qopt" onclick="qcheck(this,false,'If p∈F and q∉F, they can\'t be equivalent (ε witnesses this). So this contradicts p≡q.')">p ∈ F and q ∉ F</div>
+      <div class="qopt" onclick="qcheck(this,true,'Correct! This is the definition of equivalence — same future accept/reject behavior for every string. This MUST hold by definition.')">For every x ∈ Σ*, δ̂(p,x) ∈ F ⟺ δ̂(q,x) ∈ F</div>
+      <div class="qopt" onclick="qcheck(this,false,'p could be in F (and q too, since they\'re equivalent). This says p is NOT in F, which is not guaranteed.')">p ∉ F</div>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(9)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(11)">Next: Pumping Lemma →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 11: PUMPING LEMMA ========== -->
+<div class="lesson-section" id="sec-11">
+  <div class="section-eyebrow">Chapter 12 — Theory</div>
+  <div class="section-title">The Pumping Lemma</div>
+  <div class="section-subtitle">The tool for proving languages are NOT regular.</div>
+
+  <h2>Why Do We Need This?</h2>
+  <p>Not all languages are regular. The Pumping Lemma gives us a way to <em>prove</em> a language cannot be recognized by any DFA, NFA, or regex. The classic non-regular language is <code>L = {aⁿbⁿ | n ≥ 0}</code> — you can't count to n with finite memory.</p>
+
+  <h2>The Theorem</h2>
+  <div class="callout definition">
+    <div class="callout-label">Pumping Lemma Statement</div>
+    <p>If L is a regular language, then there exists an integer <strong>k ≥ 1</strong> (the pumping length) such that every string s ∈ L with |s| ≥ k can be split into three parts <strong>s = xyz</strong> where:</p>
+    <ol>
+      <li><strong>|y| ≥ 1</strong> — the middle part y is non-empty</li>
+      <li><strong>|xy| ≤ k</strong> — x and y together are at most k characters</li>
+      <li><strong>∀i ≥ 0: xyⁱz ∈ L</strong> — pumping y any number of times keeps the string in L</li>
+    </ol>
+  </div>
+
+  <h2>Using It: The Adversarial Game</h2>
+  <p>To prove L is NOT regular, you play a game against a demon. <strong>You win if you show the Pumping Lemma fails.</strong></p>
+
+  <div class="highlight-box">
+    <table style="color:white; font-size:0.85rem; background:none; border:none;">
+      <tr><td style="padding:0.4rem 1rem 0.4rem 0; border:none; color:var(--gold-light); font-weight:700;">Demon</td><td style="border:none; padding:0.4rem 1rem;">Picks k (you don't know what k is)</td></tr>
+      <tr><td style="padding:0.4rem 1rem 0.4rem 0; border:none; color:#98ff98; font-weight:700;">You</td><td style="border:none; padding:0.4rem 1rem;">Pick a string s ∈ L with |s| ≥ k (your choice depends on k)</td></tr>
+      <tr><td style="padding:0.4rem 1rem 0.4rem 0; border:none; color:var(--gold-light); font-weight:700;">Demon</td><td style="border:none; padding:0.4rem 1rem;">Picks how to split s = xyz (satisfying conditions 1 and 2)</td></tr>
+      <tr><td style="padding:0.4rem 1rem 0.4rem 0; border:none; color:#98ff98; font-weight:700;">You</td><td style="border:none; padding:0.4rem 1rem;">Pick i ≥ 0 to show xyⁱz ∉ L</td></tr>
+    </table>
+    <p style="margin-top:0.8rem;">If you can always find such an i (for any split the demon picks), L is not regular.</p>
+  </div>
+
+  <h2>Worked Example: L = {aⁿbⁿ | n ≥ 0}</h2>
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Demon picks k.</strong>
+        <p>We don't know what k is, but we know it's some positive integer.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>We pick s = aᵏbᵏ</strong>
+        <p>This is in L (it has k a's followed by k b's) and |s| = 2k ≥ k. ✓</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Demon picks s = xyz with |y| ≥ 1, |xy| ≤ k.</strong>
+        <p>Since |xy| ≤ k, and s starts with k a's, both x and y must be entirely within the a-prefix. So <strong>y = aʲ</strong> for some j ≥ 1, and x = aⁱ for some i ≥ 0, with i + j ≤ k.</p>
+        <div class="math">s = aⁱ · aʲ · aᵏ⁻ⁱ⁻ʲ bᵏ<br>= x &nbsp;&nbsp; y &nbsp;&nbsp;&nbsp;&nbsp; z</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <strong>We pick i = 0 (remove y).</strong>
+        <div class="math">xy⁰z = xz = aᵏ⁻ʲ bᵏ</div>
+        <p>This has k−j a's and k b's. Since j ≥ 1, k−j &lt; k. So we have fewer a's than b's → NOT in L. ✓ We win!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-label">⚡ Exam Tip: Critique Questions</div>
+    <p>The 2025 exam asked you to critique a faulty proof. Things to check for:</p>
+    <ul>
+      <li>Did they pick a string that's actually in L?</li>
+      <li>Does their split satisfy |xy| ≤ k?</li>
+      <li>Did they handle ALL possible demon splits (not just one)?</li>
+      <li>Did they actually show the pumped string leaves L?</li>
+    </ul>
+  </div>
+
+  <h2>Common Choices for s</h2>
+  <table>
+    <thead><tr><th>Language type</th><th>Good choice for s</th><th>Why it works</th></tr></thead>
+    <tbody>
+      <tr><td>{aⁿbⁿ}</td><td>aᵏbᵏ</td><td>y lands in a's only; pumping unbalances a's and b's</td></tr>
+      <tr><td>{ww | w ∈ Σ*}</td><td>aᵏbᵏaᵏbᵏ</td><td>Pumping disrupts the duplication pattern</td></tr>
+      <tr><td>Palindromes</td><td>aᵏbaᵏ</td><td>Pumping a's only on one side breaks palindrome structure</td></tr>
+      <tr><td>{a^(p) | p prime}</td><td>aᵖ where p ≥ k is prime</td><td>Pumped versions have non-prime length</td></tr>
+    </tbody>
+  </table>
+
+  <div class="quiz-block">
+    <div class="quiz-q-text">You're proving L = {aⁿbⁿ} is non-regular. The demon picks k = 5. You choose s = a⁵b⁵. The demon then splits it as x = a², y = a², z = ab⁵. What's wrong?</div>
+    <div class="quiz-opts">
+      <div class="qopt" onclick="qcheck(this,false,'Actually that IS a valid string in L for n=5. That\'s fine.')">s is not in L</div>
+      <div class="qopt" onclick="qcheck(this,true,'Correct! |xy| = |a²a²| = 4 is fine (≤5). But z = ab⁵ — wait, x+y+z should equal a⁵b⁵. x=a², y=a², z would need to be a¹b⁵ to sum to a⁵b⁵. Actually |xy| = 4 ≤ 5 is ok. The real issue: y contains only a\'s (y=a²), so pumping gives aᵏ⁻ʲ⁺²ʲ b⁵ — this might work fine. Actually check if |xy|≤k: |xy|=4≤5 ✓, |y|=2≥1 ✓. This split is valid! You can pump with i=0: xz = a²·ab⁵ = a³b⁵ ∉ L. This proof works.')">The split doesn't satisfy the pumping conditions — but actually wait, let me check |xy|...</div>
+      <div class="qopt" onclick="qcheck(this,false,'You win by finding ANY i that breaks the language. i=0 gives a³b⁵ ∉ L.')">You cannot find any i that pumps outside L</div>
+      <div class="qopt" onclick="qcheck(this,true,'Right! x=a², y=a², z=a¹b⁵ is wrong — x+y+z = a²+a²+a¹b⁵ = a⁵b⁵ ✓ so the split is fine. But the demon wrote z=ab⁵ which only has 1 a, meaning x+y+z=a²+a²+ab⁵=a⁵b⁵ ✓. With i=0: a²·ab⁵=a³b⁵ ∉ L (3≠5). The proof actually works! No problem here.')">Actually — the split IS valid (|xy|=4≤5) and pumping i=0 gives a³b⁵ ∉ L. The proof works.</div>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(10)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(12)">Next: True/False Mastery →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 12: TRUE/FALSE MASTERY ========== -->
+<div class="lesson-section" id="sec-12">
+  <div class="section-eyebrow">Chapter 13 — Exam Prep</div>
+  <div class="section-title">True/False Mastery</div>
+  <div class="section-subtitle">All 15 claims from 3 years of exams — with full explanations.</div>
+
+  <div class="callout warning">
+    <div class="callout-label">Q1 Strategy</div>
+    <p>For each claim: if TRUE, you just need to write "True." If FALSE, you must explain WHY with a counterexample or proof. Be precise and concise.</p>
+  </div>
+
+  <h2>The 6 Recurring Patterns</h2>
+  <p>Every True/False question falls into one of these patterns. Master these and you'll get Q1 every time:</p>
+
+  <table>
+    <thead><tr><th>#</th><th>Pattern</th><th>Answer</th><th>Key Insight</th></tr></thead>
+    <tbody>
+      <tr><td>A</td><td>"Finite language → complement non-regular"</td><td style="color:var(--rose)">FALSE</td><td>All finite languages are regular. Complement of regular = regular.</td></tr>
+      <tr><td>B</td><td>"Every NFA has an equivalent DFA"</td><td style="color:var(--green)">TRUE</td><td>Subset construction theorem.</td></tr>
+      <tr><td>C</td><td>"There exists NFA with no equivalent DFA"</td><td style="color:var(--rose)">FALSE</td><td>Every NFA has an equivalent DFA (same as B).</td></tr>
+      <tr><td>D</td><td>"p≡q implies δ(p,a)=δ(q,a)"</td><td style="color:var(--rose)">FALSE</td><td>Equivalence is about future acceptance, not identical transitions.</td></tr>
+      <tr><td>E</td><td>"p∈F, q∉F → p,q not equivalent"</td><td style="color:var(--green)">TRUE</td><td>ε is a distinguishing witness. (δ̂(p,ε)=p∈F but δ̂(q,ε)=q∉F)</td></tr>
+      <tr><td>F</td><td>"Complement of regular is non-regular"</td><td style="color:var(--rose)">FALSE</td><td>Regular languages are closed under complement.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>All 15 Claims — Complete Bank</h2>
+
+  <div class="accordion">
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2023(a): Given NFA N with L(N)=L, ∃ DFA M with L(M)=L. <span style="color:var(--green); margin-left:auto; margin-right:1rem;">TRUE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>TRUE.</strong> This is the NFA→DFA equivalence theorem. Subset construction converts any NFA to an equivalent DFA. No explanation needed — just write "True."</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2023(b): L = {aⁿbⁿ | n ≤ 2}. Σ*−L is non-regular. <span style="color:var(--rose); margin-left:auto; margin-right:1rem;">FALSE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>FALSE.</strong> L = {ε, ab, aabb} is a finite language. All finite languages are regular. Since regular languages are closed under complement, Σ*−L is also regular.</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2023(c): x ∈ L(M) ⟺ δ̂(s, x) ∈ F. <span style="color:var(--green); margin-left:auto; margin-right:1rem;">TRUE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>TRUE.</strong> This is the literal definition of DFA acceptance. No explanation needed.</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2023(d): aaba ∈ L(b(ab+ba)*(a+b)*b*ab(a+b)*) <span style="color:var(--rose); margin-left:auto; margin-right:1rem;">FALSE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>FALSE.</strong> The regex requires the string to start with 'b' (the first symbol is a literal 'b'). But "aaba" starts with 'a'. No string starting with 'a' can match this regex.</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2023(e): p≡q → ∀a∈Σ: δ(p,a)=δ(q,a). <span style="color:var(--rose); margin-left:auto; margin-right:1rem;">FALSE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>FALSE.</strong> State equivalence means δ(p,a) and δ(q,a) are <em>equivalent states</em>, not necessarily the <em>same</em> state. Counterexample: Take a minimal DFA; duplicate any accepting state. The two copies are equivalent but δ goes to different (yet equivalent) copies.</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2024(a): ∃ NFA N, DFA M: L(N)=L(M) ∧ M has fewer states than N. <span style="color:var(--green); margin-left:auto; margin-right:1rem;">TRUE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>TRUE.</strong> Take any DFA M. Add redundant states to get NFA N that recognizes the same language. M has fewer states. Alternatively, there are languages where the minimal DFA is smaller than any NFA for that language.</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2024(b): The Pumping Lemma holds for all finite languages. <span style="color:var(--green); margin-left:auto; margin-right:1rem;">TRUE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>TRUE.</strong> Every finite language is regular. The Pumping Lemma holds for all regular languages. Set k = (length of longest string + 1). No string in L satisfies |s| ≥ k, so the condition is vacuously true.</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2024(c): ∃ NFA N such that ∀ DFA M: L(M)≠L(N). <span style="color:var(--rose); margin-left:auto; margin-right:1rem;">FALSE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>FALSE.</strong> For every NFA, subset construction produces an equivalent DFA. No NFA can recognize a language that no DFA can recognize.</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2024(d): L is regular → complement of L is non-regular. <span style="color:var(--rose); margin-left:auto; margin-right:1rem;">FALSE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>FALSE.</strong> Regular languages are closed under complement. The complement of any regular language is also regular. (To build a DFA for the complement: flip all accepting states.)</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2024(e): p,q not equivalent → ∃a∈Σ: δ(p,a)≠δ(q,a). <span style="color:var(--rose); margin-left:auto; margin-right:1rem;">FALSE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>FALSE.</strong> Non-equivalence means there exists a string x distinguishing p and q. But the immediate transitions δ(p,a) and δ(q,a) can be the same state. Example: p∈F, q∉F, but δ(p,a)=δ(q,a)=r for all a. Still p≢q (ε witnesses it), but transitions are identical.</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2025(a): L={aⁿbⁿ|n≤100}, complement of L is non-regular. <span style="color:var(--rose); margin-left:auto; margin-right:1rem;">FALSE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>FALSE.</strong> L has only 101 strings (finite). All finite languages are regular. Complement of a regular language is regular.</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2025(b): aa ∈ L((a+ba)* + (ab+ba)*) <span style="color:var(--green); margin-left:auto; margin-right:1rem;">TRUE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>TRUE.</strong> The first alternative (a+ba)* includes (a)* which contains "aa" (take "a" twice). So aa ∈ L((a+ba)*) ⊆ L((a+ba)* + (ab+ba)*).</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2025(c): ∃ NFA N: ∀ DFA M with L(M)=L(N): N has fewer states than M. <span style="color:var(--green); margin-left:auto; margin-right:1rem;">TRUE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>TRUE.</strong> Classic result: the language of strings where the n-th-from-last bit is 1. An NFA needs n+1 states; every equivalent DFA needs 2ⁿ states. So there exists an NFA that is smaller than every equivalent DFA.</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2025(d): ∀ NFA N: ∀ DFA M with L(M)=L(N): N has fewer states than M. <span style="color:var(--rose); margin-left:auto; margin-right:1rem;">FALSE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>FALSE.</strong> This universal claim is false. For many simple languages, a DFA can have fewer or equal states to the NFA. Also, you can always add useless states to an NFA to make it larger than any equivalent DFA. The claim "ALL NFAs have fewer states than ALL equivalent DFAs" is clearly wrong.</p></div></div>
+    </div>
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        2025(e): p∈F, q∉F → p,q are not equivalent states. <span style="color:var(--green); margin-left:auto; margin-right:1rem;">TRUE</span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner"><p><strong>TRUE.</strong> Use ε as the witness. δ̂(p,ε) = p ∈ F (p accepts ε). δ̂(q,ε) = q ∉ F (q rejects ε). Since the string ε is accepted from p but rejected from q, p and q are not equivalent by definition.</p></div></div>
+    </div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(11)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(13)">Next: Practice Problems →</button>
+  </div>
+</div>
+
+<!-- ========== SECTION 13: PRACTICE ========== -->
+<div class="lesson-section" id="sec-13">
+  <div class="section-eyebrow">Chapter 14 — Exam Prep</div>
+  <div class="section-title">Full Practice Problems</div>
+  <div class="section-subtitle">Exam-style questions with full worked solutions.</div>
+
+  <div class="callout warning">
+    <div class="callout-label">How to Use This Section</div>
+    <p>Try each problem yourself first. Then click "Show Solution" to see the full worked answer. Honest self-assessment is the key to learning.</p>
+  </div>
+
+  <div class="accordion">
+
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        Problem 1 [5 marks]: True/False — Five Claims
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner">
+        <p><em>For each claim, state True or False. If False, explain why.</em></p>
+        <p><strong>(a)</strong> If L₁ and L₂ are both non-regular, then L₁ ∪ L₂ is non-regular.</p>
+        <p><strong>(b)</strong> There exists a DFA with 2 states that recognizes L = {w | w has odd length}.</p>
+        <p><strong>(c)</strong> For all DFAs M: L(M) ≠ ∅.</p>
+        <p><strong>(d)</strong> If L is infinite, then L is non-regular.</p>
+        <p><strong>(e)</strong> For all NFAs N, the subset construction produces a DFA with exactly 2|Q| states.</p>
+        <hr style="margin:1rem 0">
+        <p style="color:var(--text-dim); font-size:0.85rem;"><em>Solutions:</em></p>
+        <p><strong>(a) FALSE.</strong> L₁ = {aⁿbⁿ | n≥0} and L₂ = complement of L₁ are both non-regular, but L₁ ∪ L₂ = Σ* which IS regular.</p>
+        <p><strong>(b) TRUE.</strong> States: "even length" (ACCEPT) and "odd length". Start at "even." Every symbol swaps between them.</p>
+        <p><strong>(c) FALSE.</strong> A DFA with no accepting states (F = ∅) recognizes the empty language ∅.</p>
+        <p><strong>(d) FALSE.</strong> L = {a}* = {ε, a, aa, ...} is infinite and regular.</p>
+        <p><strong>(e) FALSE.</strong> The subset construction can produce up to 2|Q| states, but typically far fewer are reachable.</p>
+      </div></div>
+    </div>
+
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        Problem 2 [5 marks]: Build DFAs
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner">
+        <p><em>(a) [3 marks]</em> Build a DFA for L = {w ∈ {a,b}* | w contains an even number of a's}.</p>
+        <p><em>(b) [2 marks]</em> Build a DFA for L = {w ∈ {0,1}* | the binary number w is divisible by 4}.</p>
+        <hr style="margin:1rem 0">
+        <p style="color:var(--text-dim); font-size:0.85rem;"><em>Solutions:</em></p>
+        <p><strong>(a)</strong> Track #a's mod 2. Two states: q_even (ACCEPT, start), q_odd.</p>
+        <div class="math" style="font-size:0.8rem">δ(q_even, a) = q_odd,  δ(q_even, b) = q_even<br>δ(q_odd, a) = q_even,   δ(q_odd, b) = q_odd</div>
+        <p>Accepting: q_even (ε has 0 a's = even ✓).</p>
+        <p><strong>(b)</strong> Divisible by 4 = last two bits are 00. States track the last two bits read. Start state = "seen nothing" (or ε, which has value 0 → divisible by 4).</p>
+        <div class="math" style="font-size:0.8rem">States: s (start/accept, last bits "00"), q1 (last bits "01"), q2 (last bits "10"), q3 (last bits "11")<br>
+δ(s,  0)=s,  δ(s,  1)=q1<br>
+δ(q1, 0)=q2, δ(q1, 1)=q3<br>
+δ(q2, 0)=s,  δ(q2, 1)=q1<br>
+δ(q3, 0)=q2, δ(q3, 1)=q3</div>
+      </div></div>
+    </div>
+
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        Problem 3 [5 marks]: NFA + Subset Construction
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner">
+        <p>NFA over Σ = {a, b}: Q = {0, 1, 2}, s = 0, F = {2}.</p>
+        <p>Transitions: δ(0,a) = {0,1}, δ(0,b) = {0}, δ(1,a) = ∅, δ(1,b) = {2}, δ(2,a) = ∅, δ(2,b) = ∅.</p>
+        <p><em>(a)</em> Describe the language in plain English.</p>
+        <p><em>(b)</em> Convert to a DFA via subset construction. Show all work.</p>
+        <hr style="margin:1rem 0">
+        <p style="color:var(--text-dim); font-size:0.85rem;"><em>Solutions:</em></p>
+        <p><strong>(a)</strong> The language is: all strings that contain "ab" as a substring. (State 1 = "just saw 'a'", state 2 = "saw 'ab'")</p>
+        <p><strong>(b) Subset Construction Table:</strong></p>
+        <table class="sc-table">
+          <thead><tr><th>DFA State</th><th>On 'a'</th><th>On 'b'</th><th>Accept?</th></tr></thead>
+          <tbody>
+            <tr><td>→ {0}</td><td>{0,1}</td><td>{0}</td><td>No</td></tr>
+            <tr><td>{0,1}</td><td>{0,1}</td><td>{0,2}</td><td>No</td></tr>
+            <tr><td class="accept-row">★ {0,2}</td><td>{0,1}</td><td>{0}</td><td>Yes (2∈F)</td></tr>
+          </tbody>
+        </table>
+        <p>3 DFA states. Start: {0}. Accept: {0,2}.</p>
+      </div></div>
+    </div>
+
+    <div class="acc-item">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        Problem 4 [5 marks]: Regular Expressions
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-body-inner">
+        <p>Σ = {a, b}. Write regular expressions for:</p>
+        <p><strong>(a)</strong> All strings where every 'a' is immediately followed by 'b'.</p>
+        <p><strong>(b)</strong> All strings of even length that start and end with the same symbol.</p>
+        <p><strong>(c)</strong> All strings where the number of a's is divisible by 3.</p>
+        <p><strong>(d)</strong> All strings that contain neither "aa" nor "bb".</p>
+        <hr style="margin:1rem 0">
+        <p style="color:var(--text-dim); font-size:0.85rem;"><em>Solutions:</em></p>
+        <p><strong>(a)</strong> Every 'a' must be followed by 'b'. The only 'a' that doesn't need to be followed by 'b' is... none. So: <code>b*(abb*)* (ε + "nothing")</code> — wait, 'a' must always be followed by 'b'. Answer: <code>(b + ab)*</code></p>
+        <p><strong>(b)</strong> Even length, start=end=a: a(a+b)*a, even length (total). And start=end=b: b(a+b)*b. But we need even total length. a(a+b)^(2k)a doesn't work directly... Answer: <code>a(a+b)(a+b)*a + b(a+b)(a+b)*b + aa + bb</code> (length 2 base cases plus length 4+).</p>
+        <p>More cleanly: <code>(a(a+b)*a) + (b(a+b)*b)</code> where the inner part has even length. Constrain inner: <code>a((a+b)(a+b))*a + b((a+b)(a+b))*b</code></p>
+        <p><strong>(c)</strong> Groups of 3 a's: <code>b*(ab*ab*ab*)* b*</code> — any b's interspersed, a's come in groups of 3.</p>
+        <p><strong>(d)</strong> No "aa" and no "bb" — strings must alternate: ab, ba, aba, bab, abab, ... Answer: <code>(ab)*(ε+a) + (ba)*(ε+b)</code></p>
+      </div></div>
+    </div>
+
+  </div>
+
+  <hr class="divider">
+
+  <h2>Final Exam Tips</h2>
+  <div class="callout warning">
+    <div class="callout-label">⚡ Top 5 Things to Remember</div>
+    <ul>
+      <li><strong>Finite languages are ALWAYS regular</strong> — and so are their complements. This kills many T/F questions.</li>
+      <li><strong>p≡q does NOT mean δ(p,a)=δ(q,a)</strong> — equivalence = same future behavior, not same transitions.</li>
+      <li><strong>For subset construction:</strong> show your table with all states and transitions. A state is accepting if it contains any NFA accepting state.</li>
+      <li><strong>For pumping lemma:</strong> choose s carefully, account for ALL demon splits (not just one), and explicitly show the pumped string leaves L.</li>
+      <li><strong>For regex:</strong> simplify. If your answer is correct but needlessly complicated, you lose marks. Think about the simplest equivalent expression.</li>
+    </ul>
+  </div>
+
+  <div class="highlight-box">
+    <p><strong>You've completed the full lesson!</strong> Go back through any sections that felt unclear, practice writing DFAs and NFAs on paper, and build your cheat sheet. Good luck on your midterm! 🎓</p>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="nav-btn" onclick="goTo(12)">← Previous</button>
+    <button class="nav-btn primary" onclick="goTo(0)">↩ Back to Start</button>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+let currentSection = 0;
+const totalSections = 14;
+
+function goTo(n) {
+  document.querySelectorAll('.lesson-section').forEach((s,i) => {
+    s.classList.toggle('active', i === n);
+  });
+  document.querySelectorAll('.nav-item').forEach((b,i) => {
+    b.classList.toggle('active', i === n);
+  });
+  currentSection = n;
+  document.getElementById('progress').style.width = ((n+1)/totalSections*100) + '%';
+  document.querySelector('.main').scrollTo ? document.querySelector('.main').scrollTo(0,0) : window.scrollTo(0,0);
+  window.scrollTo(0,0);
+}
+
+function toggleAcc(btn) {
+  const body = btn.nextElementSibling;
+  const open = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  btn.classList.toggle('open', !open);
+}
+
+function qcheck(el, correct, msg) {
+  const block = el.closest('.quiz-block');
+  block.querySelectorAll('.qopt').forEach(o => { o.onclick = null; o.style.cursor='default'; });
+  el.classList.add(correct ? 'correct' : 'wrong');
+  const fb = block.querySelector('.quiz-feedback');
+  fb.textContent = (correct ? '✅ Correct! ' : '❌ Not quite. ') + msg;
+  fb.className = 'quiz-feedback show ' + (correct ? 'correct' : 'wrong');
+}
+
+// DFA Simulator for "contains ab"
+let simPos = -1;
+let simState = 'q0';
+let simStr = '';
+let simRunning = false;
+
+function dfaTransition(state, ch) {
+  if (state === 'q0') return ch === 'a' ? 'q1' : 'q0';
+  if (state === 'q1') return ch === 'b' ? 'q2' : 'q1';
+  if (state === 'q2') return 'q2';
+}
+
+function resetSim() {
+  simPos = -1; simState = 'q0'; simRunning = false;
+  const tape = document.getElementById('sim-tape');
+  const stateDiv = document.getElementById('sim-state');
+  const result = document.getElementById('sim-result');
+  tape.innerHTML = '<span style="color:var(--text-dim); font-size:0.85rem;">Enter a string above and press Run.</span>';
+  stateDiv.innerHTML = '';
+  result.className = 'sim-result';
+}
+
+function buildTape(str, pos, state, done) {
+  const tape = document.getElementById('sim-tape');
+  if (!str) { tape.innerHTML='<span style="color:var(--text-dim)">Empty string</span>'; return; }
+  tape.innerHTML = str.split('').map((c,i) => {
+    let cls = 'tape-cell';
+    if (i === pos) cls += ' active';
+    else if (i < pos) cls += ' done' + (done && state==='q2' ? ' accepted' : done && state!=='q2' ? ' rejected' : '');
+    return `<div class="${cls}">${c}</div>`;
+  }).join('');
+}
+
+function runDFA() {
+  const str = document.getElementById('dfa-input').value;
+  simStr = str;
+  if (!/^[ab]*$/.test(str) && str !== '') {
+    document.getElementById('sim-state').innerHTML = '<span class="state-tag reject">Invalid — only a and b allowed</span>';
+    return;
+  }
+  let state = 'q0';
+  for (let i = 0; i < str.length; i++) {
+    state = dfaTransition(state, str[i]);
+  }
+  buildTape(str, str.length, state, true);
+  const stateDiv = document.getElementById('sim-state');
+  stateDiv.innerHTML = `<span class="state-tag current">Final state: ${state}</span><span class="state-tag ${state==='q2'?'accept':'reject'}">${state==='q2'?'Accepting':'Not accepting'}</span>`;
+  const result = document.getElementById('sim-result');
+  if (state === 'q2') {
+    result.textContent = '✓ ACCEPTED — "' + (str||'ε') + '" contains "ab" as a substring.';
+    result.className = 'sim-result accept';
+  } else {
+    result.textContent = '✗ REJECTED — "' + (str||'ε') + '" does not contain "ab" as a substring.';
+    result.className = 'sim-result reject';
+  }
+}
+
+let stepPos = 0;
+let stepState = 'q0';
+function stepDFA() {
+  const str = document.getElementById('dfa-input').value;
+  if (!/^[ab]*$/.test(str) && str !== '') return;
+  if (simStr !== str) { stepPos = 0; stepState = 'q0'; simStr = str; }
+  if (stepPos > str.length) { stepPos = 0; stepState = 'q0'; }
+
+  if (stepPos < str.length) {
+    buildTape(str, stepPos, stepState, false);
+    const stateDiv = document.getElementById('sim-state');
+    stateDiv.innerHTML = `<span class="state-tag current">Current state: ${stepState}</span><span class="state-tag info">Reading: '${str[stepPos]}'</span>`;
+    stepState = dfaTransition(stepState, str[stepPos]);
+    stepPos++;
+  } else {
+    buildTape(str, stepPos, stepState, true);
+    const stateDiv = document.getElementById('sim-state');
+    stateDiv.innerHTML = `<span class="state-tag current">Final state: ${stepState}</span><span class="state-tag ${stepState==='q2'?'accept':'reject'}">${stepState==='q2'?'✓ Accepted':'✗ Rejected'}</span>`;
+    const result = document.getElementById('sim-result');
+    if (stepState === 'q2') { result.textContent = '✓ ACCEPTED'; result.className='sim-result accept'; }
+    else { result.textContent = '✗ REJECTED'; result.className='sim-result reject'; }
+    stepPos = 0; stepState = 'q0';
+  }
+}
+
+// Regex tester
+const regexMap = {
+  'b*a*': { desc: 'strings with no "ab"', check: w => !/ab/.test(w) },
+  '(b+ab)*(a+ε)': { desc: 'no consecutive aa', check: w => !/aa/.test(w) },
+  '(a+b)(a+b)(a+b)*(a+b)': { desc: 'odd length', check: w => w.length % 2 === 1 },
+  '(a+b)*ab(a+b)*': { desc: 'contains "ab"', check: w => /ab/.test(w) },
+};
+let currentCheck = w => !/ab/.test(w);
+let currentPattern = 'b*a*';
+
+function loadRegex(pattern, desc) {
+  document.getElementById('rx-pattern').value = pattern + ' — ' + desc;
+  currentCheck = regexMap[pattern]?.check || (() => false);
+  currentPattern = pattern;
+  document.getElementById('rx-test').value = '';
+  document.getElementById('rx-result').textContent = '';
+  document.getElementById('rx-result').style.background = '';
+}
+
+function testRegex() {
+  const test = document.getElementById('rx-test').value;
+  if (test === '') { document.getElementById('rx-result').textContent = ''; return; }
+  if (!/^[ab01]*$/.test(test)) {
+    document.getElementById('rx-result').textContent = 'Use only a and b (or 0 and 1)';
+    return;
+  }
+  const match = currentCheck(test);
+  const el = document.getElementById('rx-result');
+  el.textContent = match ? `✅ "${test}" MATCHES this pattern` : `❌ "${test}" does NOT match this pattern`;
+  el.style.background = match ? '#f0f7f0' : '#fdf0ee';
+  el.style.color = match ? 'var(--green)' : 'var(--rose)';
+}
+
+// Init
+goTo(0);
+</script>
+</body>
+</html>
