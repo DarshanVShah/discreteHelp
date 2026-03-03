@@ -626,12 +626,16 @@ li { margin-bottom: 0.4rem; line-height: 1.7; }
   }
   
   .progress-label { font-size: 0.55rem; }
-}
 
 .tag { display: inline-block; font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; }
 .tag.exam { background: rgba(201,168,76,0.2); color: #8a6820; }
 
 .divider { border: none; border-top: 1px solid var(--paper3); margin: 2rem 0; }
+
+/* Attribution added to each section */
+.section-attrib { text-align: center; margin-top: 1.2rem; color: var(--text-dim); font-size: 0.9rem; }
+.section-attrib a { color: var(--teal); text-decoration: none; }
+.section-attrib a:hover { text-decoration: underline; }
 
 </style>
 </head>
@@ -2226,6 +2230,15 @@ function closeMenuOnMobile() {
   }
 }
 
+function addAttributionToSections() {
+  document.querySelectorAll('.lesson-section').forEach(sec => {
+    if (sec.querySelector('.section-attrib')) return;
+    const p = document.createElement('p');
+    p.className = 'section-attrib';
+    p.innerHTML = 'Created by <strong>Darshan Shah</strong> • <a href="https://darshanvshah.com" target="_blank" rel="noopener noreferrer">darshanvshah.com</a>';
+    sec.appendChild(p);
+  });
+}
 function goTo(n) {
   document.querySelectorAll('.lesson-section').forEach((s,i) => {
     s.classList.toggle('active', i === n);
@@ -2372,6 +2385,7 @@ function testRegex() {
 }
 
 // Init
+addAttributionToSections();
 goTo(0);
 </script>
 </body>
